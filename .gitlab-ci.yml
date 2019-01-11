@@ -26,4 +26,4 @@ variables:
   PAGES_MKDOCS: "false"
 
 before_script:
-  - cp docker/rootfs/etc/scheduler/config.sample.json src/
+  - cp docker/rootfs/etc/scheduler/config.sample.json src/config.json
