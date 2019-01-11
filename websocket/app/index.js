@@ -5,9 +5,10 @@ module.exports = (log, server) => {
   const wss = new WebSocket.Server({ server });
 
   wss.on('connection', (ws) => {
-    ws.on('message', incoming = (message) => {
+    ws.on('message', (message) => {
       message = JSON.parse(message);
       switch (message.request) {
+        default: break;
         case 'login':
           require('./login')(log, ws, message, users, {});
           break;
