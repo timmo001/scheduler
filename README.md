@@ -1,7 +1,5 @@
 # Scheduler
 
-**This project is currently a work in progress. Do not attempt to use as it is not ready!**
-
 [![GitHub Release](https://img.shields.io/github/release/timmo001/scheduler.svg)](https://github.com/timmo001/scheduler/releases)
 [![License](https://img.shields.io/github/license/timmo001/scheduler.svg)](https://github.com/timmo001/scheduler/blob/master/LICENSE.md)
 [![pipeline status](https://gitlab.com/timmo/scheduler/badges/master/pipeline.svg)](https://gitlab.com/timmo/scheduler/commits/master)
