@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 // import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
-import { CircularProgress, Typography } from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
 import Login from './Login';
 import Main from './Main';
 import config from '../config.json';
@@ -91,6 +92,10 @@ class Root extends React.Component {
 
   handleSnackbarClose = () => this.setState({ snackMessage: { open: false, text: '' } });
 
+  handleAddJob = (name, type, command, args) => {
+
+  };
+
   render() {
     const { handleLogIn } = this;
     const { classes } = this.props;
@@ -104,7 +109,8 @@ class Root extends React.Component {
             :
             data ?
               <Main
-                data={data} />
+                data={data}
+                handleAddJob={this.handleAddJob} />
               :
               <div className={classes.center}>
                 <CircularProgress className={classes.progress} />

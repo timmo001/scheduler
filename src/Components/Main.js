@@ -3,11 +3,16 @@ import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 // import Typography from '@material-ui/core/Typography';
+import Fab from '@material-ui/core/Fab';
+import Tooltip from '@material-ui/core/Tooltip';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 // import CardActions from '@material-ui/core/CardActions';
+import AddIcon from '@material-ui/icons/Add';
+
 const EnhancedTable = lazy(() => import('./EnhancedTable'));
+const AddJob = lazy(() => import('./AddJob'));
 
 const styles = theme => ({
   grid: {
@@ -32,11 +37,16 @@ const styles = theme => ({
 
 class Main extends React.Component {
   state = {
+    addJob: false
   };
+
+  handleAddJob = () => this.setState({ addJob: true });
+
+  handleAddJobClosed = () => this.setState({ addJob: false });
 
   render() {
     const { classes, data } = this.props;
-    // const {  } = this.state;
+    const { addJob } = this.state;
 
     return (
       <Suspense fallback={<CircularProgress className={classes.progress} />}>
@@ -47,7 +57,12 @@ class Main extends React.Component {
           justify="center">
           <Grid item lg={8} md={8} sm={10} xs={12}>
             <Card className={classes.card} align="center">
-              <CardContent className={classes.cardContent} align="left">
+              <CardContent className={classes.cardContent} align="right">
+                <Tooltip title="Add Job" aria-label="Add Job">
+                  <Fab color="primary" className={classes.fab} size="small" onClick={this.handleAddJob}>
+                    <AddIcon />
+                  </Fab>
+                </Tooltip>
                 <EnhancedTable
                   title={`Jobs: ${data.length}`}
                   rows={data} />
@@ -55,6 +70,11 @@ class Main extends React.Component {
             </Card>
           </Grid>
         </Grid>
+        {addJob &&
+          <AddJob
+            handleClosed={this.handleAddJobClosed}
+            handleAddJob={this.props.handleAddJob} />
+        }
       </Suspense>
     );
 
@@ -63,7 +83,8 @@ class Main extends React.Component {
 
 Main.propTypes = {
   classes: PropTypes.object.isRequired,
-  data: PropTypes.array.isRequired
+  data: PropTypes.array.isRequired,
+  handleAddJob: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(Main);
