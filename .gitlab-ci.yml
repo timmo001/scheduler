@@ -24,3 +24,6 @@ variables:
   TEST: "false"
   PUBLISH_RELEASE_FILE: "true"
   PAGES_MKDOCS: "false"
+
+before_script:
+  - cp docker/rootfs/etc/scheduler/config.sample.json websocket
