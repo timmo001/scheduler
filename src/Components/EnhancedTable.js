@@ -149,11 +149,11 @@ let EnhancedTableToolbar = props => {
             </IconButton>
           </Tooltip>
         ) : (
-            <Tooltip title="Filter list">
+            // <Tooltip title="Filter list">
               <IconButton aria-label="Filter list">
                 <FilterListIcon />
               </IconButton>
-            </Tooltip>
+            // </Tooltip>
           )}
       </div>
     </Toolbar>
