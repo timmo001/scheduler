@@ -1,0 +1,23 @@
+{
+  "name": "scheduler-websocket",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/timmo001/quiz-ws",
+  "author": "Timmo <contact@timmo.xyz> (https://git.timmo.xyz)",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "2.4.3",
+    "cryptr": "4.0.2",
+    "nedb": "1.8.0",
+    "simple-node-logger": "18.12.21",
+    "superagent": "4.1.0",
+    "ws": "6.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "1.18.9"
+  }
+}
