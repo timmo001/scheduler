@@ -2,15 +2,21 @@ import React, { lazy, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import CircularProgress from '@material-ui/core/CircularProgress';
+// import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+// import CardActions from '@material-ui/core/CardActions';
+const EnhancedTable = lazy(() => import('./EnhancedTable'));
 
-// const Header = lazy(() => import('./Header'));
-
-const styles = () => ({
-  root: {
+const styles = theme => ({
+  grid: {
     height: '100%',
-    width: '100%',
-    maxHeight: '100%',
-    maxWidth: '100%'
+    paddingTop: theme.spacing.unit * 4,
+    paddingBottom: theme.spacing.unit * 2,
+    paddingLeft: theme.spacing.unit * 2,
+    paddingRight: theme.spacing.unit * 2,
+    overflow: 'auto'
   },
   pageContainer: {
     height: '100%',
@@ -29,13 +35,26 @@ class Main extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
-    const { test } = this.state;
+    const { classes, data } = this.props;
+    // const {  } = this.state;
 
-    return(
+    return (
       <Suspense fallback={<CircularProgress className={classes.progress} />}>
-        <div className={classes.root}>
-        </div>
+        <Grid
+          className={classes.grid}
+          container
+          alignItems="center"
+          justify="center">
+          <Grid item lg={4} md={8} sm={8} xs={12}>
+            <Card className={classes.card} align="center">
+              <CardContent className={classes.cardContent} align="left">
+                <EnhancedTable
+                  title={`Jobs: ${data.length}`}
+                  rows={data} />
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
       </Suspense>
     );
 
@@ -43,7 +62,8 @@ class Main extends React.Component {
 }
 
 Main.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired
 };
 
 export default withStyles(styles)(Main);

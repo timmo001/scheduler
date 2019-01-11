@@ -1,12 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import request from 'superagent';
 import withStyles from '@material-ui/core/styles/withStyles';
 import green from '@material-ui/core/colors/green';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
-// import CardMedia from '@material-ui/core/CardMedia';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
@@ -17,9 +15,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import CircularProgress from '@material-ui/core/CircularProgress';
-// import Visibility from '@material-ui/icons/Visibility';
-// import VisibilityOff from '@material-ui/icons/VisibilityOff';
-// import Logo from '../resources/logo.svg';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 const styles = theme => ({
   grid: {
@@ -98,15 +95,12 @@ class Login extends React.Component {
       ? process.env.REACT_APP_OVERRIDE_PASSWORD
       : sessionStorage.getItem('password');
 
-    localStorage.setItem('should_auth', true);
-
     this.setState({
       username: username ? username : '',
       password: password ? password : '',
     }, () => {
-      localStorage.setItem('been_here', true);
       this.handleValidation(invalid => {
-        !invalid && localStorage.getItem('should_login') && !this.state.createAccount && this.handleLogIn();
+        !invalid && this.props.handleLogIn(username, password);
       });
     });
   };
@@ -114,7 +108,7 @@ class Login extends React.Component {
   handleValidation = cb => {
     if (!this.state.username) { this.setState({ invalid: 'No username!' }); cb(this.state.invalid); return; }
     if (!this.state.password) { this.setState({ invalid: 'No password!' }); cb(this.state.invalid); return; }
-    this.setState({ invalid: undefined }, () => cb(undefined));
+    this.setState({ invalid: undefined }, () => cb());
   };
 
   handleChange = prop => event => this.setState({ [prop]: event.target.value }, () => this.handleValidation(() => { }));
@@ -127,59 +121,8 @@ class Login extends React.Component {
 
   handleKeyPress = (e) => {
     if (e.key === 'Enter' && !this.state.invalid) {
-      this.state.createAccount ? this.handleCreateAccount() : this.handleLogIn();
+      this.handleLogIn(this.state.username, this.state.password);
     }
-  };
-
-  handleCreateAccount = () => {
-    var api_url = this.state.api_url;
-    api_url = api_url.endsWith('/') ? api_url.substring(0, api_url.length - 1) : this.state.api_url;
-    this.setState({ api_url, success: false, loading: true, }, () => {
-      if (this.state.username) {
-        console.log('Create account');
-        request
-          .post(`${this.state.api_url}/login/setup`)
-          .send({
-            username: this.state.username,
-            password: this.state.password,
-          })
-          .retry(2)
-          .timeout({
-            response: 10000,
-            deadline: 80000,
-          })
-          .then(res => {
-            if (res.status === 200) {
-              localStorage.setItem('username', this.state.username);
-              sessionStorage.setItem('password', this.state.password);
-              localStorage.setItem('api_url', this.state.api_url);
-              localStorage.setItem('hass_url', this.state.hass_url);
-              this.setState({ loading: false, success: true }, () => {
-                this.props.loggedIn(res.body, this.state.username, this.state.password, this.state.api_url, this.state.hass_url);
-              });
-            } else {
-              this.setState({ loading: false, success: false }, () => {
-                console.error(`Error ${res.status}: ${res.body}`);
-                this.setState({ failed: true, error: `Error ${res.status}: ${res.body}\nCheck your credentials and try again` }, () =>
-                  setTimeout(() => this.setState({ error: undefined }), 20000));
-              });
-            }
-          })
-          .catch(err => {
-            this.setState({ loading: false, success: false }, () => {
-              if (err.response) {
-                console.error(`Error: ${err.status} - ${err.response.text}`);
-                this.setState({ error: `Error: ${err.status} - ${err.response.text}` }, () =>
-                  setTimeout(() => this.setState({ error: undefined }), 8000));
-              } else {
-                console.error(`Error: ${err.message} - Check your credentials and try again`);
-                this.setState({ error: `Error: ${err.message} - Check your credentials and try again` }, () =>
-                  setTimeout(() => this.setState({ error: undefined }), 8000));
-              }
-            });
-          });
-      }
-    });
   };
 
   render() {
@@ -199,10 +142,6 @@ class Login extends React.Component {
         <Grid item lg={4} md={8} sm={8} xs={12}>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent} align="center" component="form">
-              {/* <CardMedia
-                className={classes.media}
-                image={Logo}
-                title="Scheduler" /> */}
               <Typography variant="h5" component="h2">
                 Login
               </Typography>
@@ -242,7 +181,7 @@ class Login extends React.Component {
                           aria-label="Toggle password visibility"
                           onClick={this.handleClickShowPassword}
                           onMouseDown={this.handleMouseDownPassword}>
-                          {/* {showPassword ? <VisibilityOff /> : <Visibility />} */}
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
                     } />

@@ -44,7 +44,8 @@ class Root extends React.Component {
     snackMessage: { open: false, text: '' },
     connected: false,
     shouldLogIn: false,
-    loggedIn: false
+    loggedIn: false,
+    data: null
   };
 
   componentDidMount = () => {
@@ -52,7 +53,9 @@ class Root extends React.Component {
   };
 
   handleLogIn = (username, password) => {
-    ws.send(JSON.stringify({ request: 'login', username, password }));
+    this.setState({ username, password }, () =>
+      ws.send(JSON.stringify({ request: 'login', username, password }))
+    );
   };
 
   connectToWS = () => {
@@ -71,6 +74,10 @@ class Root extends React.Component {
           break;
         case 'login':
           this.setState({ shouldLogIn: !response.accepted });
+          if (response.accepted) {
+            localStorage.setItem('username', this.state.username);
+            sessionStorage.setItem('password', this.state.password);
+          }
           break;
         case 'add_job':
           console.log(response);
