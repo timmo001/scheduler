@@ -45,7 +45,7 @@ class Main extends React.Component {
           container
           alignItems="center"
           justify="center">
-          <Grid item lg={4} md={8} sm={8} xs={12}>
+          <Grid item lg={8} md={8} sm={10} xs={12}>
             <Card className={classes.card} align="center">
               <CardContent className={classes.cardContent} align="left">
                 <EnhancedTable
