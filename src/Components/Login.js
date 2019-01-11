@@ -121,7 +121,7 @@ class Login extends React.Component {
 
   handleKeyPress = (e) => {
     if (e.key === 'Enter' && !this.state.invalid) {
-      this.handleLogIn(this.state.username, this.state.password);
+      this.props.handleLogIn(this.state.username, this.state.password);
     }
   };
 
