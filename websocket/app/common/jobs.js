@@ -8,8 +8,14 @@ const sendJobs = (ws) => {
   }, process.env.JOB_TIMEOUT || 10000);
 };
 
-const addJob = (job, cb) => {
-  db.insert(job, (err, newDoc) => err ? cb(err) : cb(null, newDoc));
+const addJob = (ws, job, cb) => {
+  db.insert(job, (err) => {
+    if (err) cb(err)
+    else {
+      sendJobs(ws);
+      cb(null);
+    }
+  });
 };
 
 module.exports = {

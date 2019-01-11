@@ -26,14 +26,7 @@ const addUser = (user, cb) => {
   });
 };
 
-const addJob = (job, cb) => {
-  db.insert
-};
-
-
-
 module.exports = {
   getUser,
-  addUser,
-  addJob
+  addUser
 };
