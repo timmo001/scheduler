@@ -68,7 +68,6 @@ class Main extends React.Component {
   render() {
     const { classes } = this.props;
     const { columns, rows, addJob } = this.state;
-    console.log('rows:', rows);
 
     return (
       <Suspense fallback={<CircularProgress className={classes.progress} />}>

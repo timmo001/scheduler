@@ -71,7 +71,7 @@ class Root extends React.Component {
       const response = JSON.parse(event.data);
       switch (response.request) {
         default:
-          console.log(response);
+          console.log('WS Received:', response);
           break;
         case 'login':
           this.setState({ shouldLogIn: !response.accepted });
@@ -80,12 +80,10 @@ class Root extends React.Component {
             sessionStorage.setItem('password', this.state.login.password);
           }
           break;
-        case 'add_job':
-          console.log(response);
-          break;
         case 'data':
           this.setState({ data: response.data });
           break;
+        case 'add_job': break;
       }
     };
   };
