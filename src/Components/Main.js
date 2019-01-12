@@ -2,13 +2,11 @@ import React, { lazy, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import CircularProgress from '@material-ui/core/CircularProgress';
-// import Typography from '@material-ui/core/Typography';
 import Fab from '@material-ui/core/Fab';
 // import Tooltip from '@material-ui/core/Tooltip';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-// import CardActions from '@material-ui/core/CardActions';
 import AddIcon from '@material-ui/icons/Add';
 
 const EnhancedTable = lazy(() => import('./EnhancedTable'));
@@ -51,15 +49,21 @@ class Main extends React.Component {
   componentWillReceiveProps = (oldProps, newProps) =>
     oldProps.data !== newProps.data && this.updateRows(newProps.data);
 
-  updateRows = rows => this.setState({
-    rows: rows.map(r => {
-      r.command = `${r.command} ${r.args.join(' ')}`;
-      delete r['args'];
+  updateRows = rows => {
+    let argsCount = 0, { columns } = this.state;
+    rows = rows.map(r => {
+      if (r.args.length > argsCount) argsCount = r.args.length;
       delete r['_id'];
-
       return r;
-    })
-  });
+    });
+    for (let i = 0; i < argsCount; i++) columns.push({
+      id: 'args',
+      numeric: false,
+      disablePadding: false,
+      label: `Argument ${i > 10 ? i + 1 : `0${i + 1}`}`
+    });
+    this.setState({ rows, columns });
+  };
 
   handleAddJob = () => this.setState({ addJob: true });
 
