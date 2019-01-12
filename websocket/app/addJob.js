@@ -4,13 +4,13 @@ module.exports = (log, ws, req, users) => {
   users.getUser(req.login, true, (err, user) => {
     if (!err) {
       console.log(`User ${user.username} found.`);
-      jobs.addJob(ws, req.job, (err, jobs) => {
+      jobs.addJob(log, ws, req.job, (err) => {
         if (err) {
           log.error(err);
-          ws.send(JSON.stringify({ request: 'add_job', data: null, message: err }));
+          ws.send(JSON.stringify({ request: 'add_job', success: false, message: err }));
           return;
         }
-        ws.send(JSON.stringify({ request: 'add_job', data: jobs }));
+        ws.send(JSON.stringify({ request: 'add_job', success: true }));
       });
     }
   });

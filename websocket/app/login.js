@@ -9,6 +9,6 @@ module.exports = (log, ws, req, users) => {
     }
     log.info(`User ${user.username} found.`);
     ws.send(JSON.stringify({ request: 'login', accepted: true }));
-    jobs.sendJobs(ws);
+    jobs.sendJobs(log, ws);
   });
 };

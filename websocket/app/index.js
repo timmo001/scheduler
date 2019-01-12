@@ -18,9 +18,7 @@ module.exports = (log, server) => {
       }
     });
 
-    ws.on('close', () => {
-      // clearInterval(id);
-    });
+    ws.on('close', () => { });
   });
 
 };
