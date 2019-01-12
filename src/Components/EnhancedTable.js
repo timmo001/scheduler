@@ -289,8 +289,8 @@ class EnhancedTable extends React.Component {
                       <TableCell padding="checkbox">
                         <Checkbox checked={isSelected} />
                       </TableCell>
-                      {Object.keys(n).map(x =>
-                        <TableCell>{n[x]}</TableCell>
+                      {Object.keys(n).map((x, id) =>
+                        <TableCell key={id}>{n[x]}</TableCell>
                       )}
                     </TableRow>
                   );
