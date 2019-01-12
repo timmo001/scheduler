@@ -48,7 +48,7 @@ class EnhancedTableHead extends React.Component {
   };
 
   render() {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, rows } = this.props;
+    const { onSelectAllClick, order, orderBy, numSelected, rowCount, columns } = this.props;
 
     return (
       <TableHead>
@@ -57,24 +57,25 @@ class EnhancedTableHead extends React.Component {
             <Checkbox
               indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={numSelected === rowCount}
-              onChange={onSelectAllClick} />
+              onChange={onSelectAllClick}
+            />
           </TableCell>
-          {rows.map(row => {
+          {columns.map(column => {
             return (
               <TableCell
-                key={row.id}
-                numeric={row.numeric}
-                padding={row.disablePadding ? 'none' : 'default'}
-                sortDirection={orderBy === row.id ? order : false}>
+                key={column.id}
+                align={column.numeric ? 'right' : 'left'}
+                padding={column.disablePadding ? 'none' : 'default'}
+                sortDirection={orderBy === column.id ? order : false}>
                 <Tooltip
                   title="Sort"
-                  placement={row.numeric ? 'bottom-end' : 'bottom-start'}
+                  placement={column.numeric ? 'bottom-end' : 'bottom-start'}
                   enterDelay={300}>
                   <TableSortLabel
-                    active={orderBy === row.id}
+                    active={orderBy === column.id}
                     direction={order}
-                    onClick={this.createSortHandler(row.id)}>
-                    {row.label}
+                    onClick={this.createSortHandler(column.id)}>
+                    {column.label}
                   </TableSortLabel>
                 </Tooltip>
               </TableCell>
@@ -93,7 +94,8 @@ EnhancedTableHead.propTypes = {
   order: PropTypes.string.isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
-  rows: PropTypes.array.isRequired
+  columns: PropTypes.array.isRequired,
+  title: PropTypes.string
 };
 
 const toolbarStyles = theme => ({
@@ -122,7 +124,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-  const { numSelected, classes, title } = props;
+  const { classes, numSelected, title } = props;
 
   return (
     <Toolbar
@@ -150,9 +152,9 @@ let EnhancedTableToolbar = props => {
           </Tooltip>
         ) : (
             // <Tooltip title="Filter list">
-              <IconButton aria-label="Filter list">
-                <FilterListIcon />
-              </IconButton>
+            <IconButton aria-label="Filter list">
+              <FilterListIcon />
+            </IconButton>
             // </Tooltip>
           )}
       </div>
@@ -190,7 +192,15 @@ class EnhancedTable extends React.Component {
     selected: [],
     page: 0,
     rowsPerPage: 8,
+    rows: []
   };
+
+  componentDidMount = () => this.updateRows(this.props.rows);
+
+  componentWillReceiveProps = (oldProps, newProps) =>
+    oldProps.rows !== newProps.rows && this.updateRows(newProps.rows);
+
+  updateRows = rows => this.setState({ rows });
 
   handleRequestSort = (event, property) => {
     const orderBy = property;
@@ -243,11 +253,12 @@ class EnhancedTable extends React.Component {
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
   render() {
-    const { classes, rows, title } = this.props;
-    const { order, orderBy, selected, rowsPerPage, page } = this.state;
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    const { classes, title, columns } = this.props;
+    const { order, orderBy, selected, rowsPerPage, page, rows } = this.state;
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows ? rows.length : 0 - page * rowsPerPage);
 
-    return (
+    if (!rows) return null
+    else return (
       <div className={classes.root}>
         <EnhancedTableToolbar numSelected={selected.length} title={title} />
         <div className={classes.tableWrapper}>
@@ -259,26 +270,27 @@ class EnhancedTable extends React.Component {
               onSelectAllClick={this.handleSelectAllClick}
               onRequestSort={this.handleRequestSort}
               rowCount={rows.length}
-              rows={rows} />
+              title={title}
+              columns={columns} />
             <TableBody>
               {stableSort(rows, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map(n => {
+                .map((n, id) => {
                   const isSelected = this.isSelected(n.id);
                   return (
                     <TableRow
+                      key={id}
                       hover
                       onClick={event => this.handleClick(event, n.id)}
                       role="checkbox"
                       aria-checked={isSelected}
                       tabIndex={-1}
-                      key={n.id}
                       selected={isSelected}>
                       <TableCell padding="checkbox">
                         <Checkbox checked={isSelected} />
                       </TableCell>
                       {Object.keys(n).map(x =>
-                        <TableCell>{x}</TableCell>
+                        <TableCell>{n[x]}</TableCell>
                       )}
                     </TableRow>
                   );
@@ -292,7 +304,7 @@ class EnhancedTable extends React.Component {
           </Table>
         </div>
         <TablePagination
-          rowsPerPageOptions={[5, 8, 10, 20]}
+          rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
@@ -312,6 +324,7 @@ class EnhancedTable extends React.Component {
 
 EnhancedTable.propTypes = {
   classes: PropTypes.object.isRequired,
+  columns: PropTypes.array.isRequired,
   rows: PropTypes.array.isRequired,
   title: PropTypes.string
 };

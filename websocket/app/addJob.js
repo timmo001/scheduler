@@ -1,7 +1,7 @@
 const jobs = require('./common/jobs');
 
 module.exports = (log, ws, req, users) => {
-  users.getUser({ username: process.env.USERNAME, password: process.env.PASSWORD }, true, (err, user) => {
+  users.getUser(req.login, true, (err, user) => {
     if (!err) {
       console.log(`User ${user.username} found.`);
       jobs.addJob(ws, req.job, (err, jobs) => {

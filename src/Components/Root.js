@@ -54,8 +54,8 @@ class Root extends React.Component {
   };
 
   handleLogIn = (username, password) => {
-    this.setState({ username, password }, () =>
-      ws.send(JSON.stringify({ request: 'login', username, password }))
+    this.setState({ login: { username, password } }, () =>
+      ws.send(JSON.stringify({ request: 'login', login: { username, password } }))
     );
   };
 
@@ -76,8 +76,8 @@ class Root extends React.Component {
         case 'login':
           this.setState({ shouldLogIn: !response.accepted });
           if (response.accepted) {
-            localStorage.setItem('username', this.state.username);
-            sessionStorage.setItem('password', this.state.password);
+            localStorage.setItem('username', this.state.login.username);
+            sessionStorage.setItem('password', this.state.login.password);
           }
           break;
         case 'add_job':
@@ -92,9 +92,12 @@ class Root extends React.Component {
 
   handleSnackbarClose = () => this.setState({ snackMessage: { open: false, text: '' } });
 
-  handleAddJob = (name, type, command, args) => {
-
-  };
+  handleAddJob = (name, type, command, args) =>
+    ws.send(JSON.stringify({
+      request: 'add_job',
+      login: this.state.login,
+      job: { name, type, command, args }
+    }));
 
   render() {
     const { handleLogIn } = this;
@@ -116,7 +119,7 @@ class Root extends React.Component {
                 <CircularProgress className={classes.progress} />
                 {connected ?
                   <Typography variant="subtitle1" className={classes.text}>
-                    Loading data..
+                    Loading..
                   </Typography>
                   :
                   <Typography variant="subtitle1" className={classes.text}>

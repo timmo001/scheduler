@@ -22,6 +22,9 @@ const styles = theme => ({
   },
   margin: {
     margin: theme.spacing.unit
+  },
+  argButton: {
+    marginTop: theme.spacing.unit
   }
 });
 
@@ -31,7 +34,7 @@ class AddJob extends React.Component {
     name: '',
     type: 'shell',
     command: '',
-    args: []
+    args: ['']
   };
 
   handleClose = () => this.setState({ open: false }, () => this.props.handleClosed());
@@ -90,7 +93,7 @@ class AddJob extends React.Component {
             {args.map((arg, id) =>
               <TextField
                 key={id}
-                label="Argument"
+                label={`Argument ${id > 10 ? id + 1 : `0${id + 1}`}`}
                 className={classNames(classes.margin, classes.textField)}
                 value={arg}
                 onChange={this.handleArgChange(id)}
@@ -101,11 +104,11 @@ class AddJob extends React.Component {
                         <DeleteIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                  </InputAdornment>,
+                  </InputAdornment>
                 }} />
             )}
             <Tooltip title="Add argument" aria-label="Add argument">
-              <IconButton aria-label="Add argument" className={classes.margin}>
+              <IconButton aria-label="Add argument" className={classes.argButton}>
                 <AddIcon fontSize="small" />
               </IconButton>
             </Tooltip>
