@@ -20,14 +20,14 @@ const sendJobs = (log, ws) => {
   try {
     ws.send(JSON.stringify({ request: 'data', data: getJobs() }));
   } catch (e) {
-    log.error(`Error when sending jobs for ${ws.id}: `, e.message);
+    log.error(`WS - Error when sending jobs for ${ws.id}: `, e.message);
   }
   let sendJobTimeout = setInterval(() => {
-    log.debug(`Send jobs.. (${ws.id})`);
+    log.debug(`WS - Send jobs.. (${ws.id})`);
     try {
       ws.send(JSON.stringify({ request: 'data', data: getJobs() }));
     } catch (e) {
-      log.error(`Error when sending jobs for ${ws.id}: `, e.message);
+      log.error(`WS - Error when sending jobs for ${ws.id}: `, e.message);
       clearInterval(sendJobTimeout);
     }
   }, process.env.SEND_JOB_INTERVAL || 10000);

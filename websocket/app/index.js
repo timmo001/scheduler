@@ -7,6 +7,7 @@ module.exports = (log, server) => {
   wss.on('connection', (ws) => {
     ws.id = uuid.v4();
     ws.send(JSON.stringify({ request: 'id', id: ws.id }));
+    log.debug('WS - New connection: ', ws.id);
 
     ws.on('message', (message) => {
       message = JSON.parse(message);
