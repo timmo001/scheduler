@@ -70,7 +70,7 @@ class Root extends React.Component {
     ws.onmessage = (event) => {
       const response = JSON.parse(event.data);
       process.env.NODE_ENV === 'development' &&
-        console.log('WS Received:', response);
+        console.log('WS - Received:', response);
       switch (response.request) {
         default: break;
         case 'login':
