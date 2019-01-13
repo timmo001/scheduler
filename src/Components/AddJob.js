@@ -32,6 +32,7 @@ class AddJob extends React.Component {
   state = {
     open: true,
     name: '',
+    schedule: '0 * * * * *',
     type: 'shell',
     command: '',
     args: ['']
@@ -59,6 +60,7 @@ class AddJob extends React.Component {
       open,
       name,
       // type,
+      schedule,
       command,
       args
     } = this.state;
@@ -81,6 +83,15 @@ class AddJob extends React.Component {
               className={classNames(classes.margin, classes.textField)}
               value={name}
               onChange={this.handleChange('name')} />
+            <br />
+            <TextField
+              id="schedule"
+              label="Schedule"
+              type="text"
+              margin="dense"
+              className={classNames(classes.margin, classes.textField)}
+              value={schedule}
+              onChange={this.handleChange('schedule')} />
             <br />
             <TextField
               id="command"

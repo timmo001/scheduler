@@ -197,8 +197,8 @@ class EnhancedTable extends React.Component {
 
   componentDidMount = () => this.updateRows(this.props.rows);
 
-  componentWillReceiveProps = (oldProps, newProps) =>
-    oldProps.rows !== newProps.rows && this.updateRows(newProps.rows);
+  componentWillReceiveProps = (nextProps) =>
+    this.props.rows !== nextProps.rows && this.updateRows(nextProps.rows);
 
   updateRows = rows => this.setState({ rows });
 
@@ -304,7 +304,7 @@ class EnhancedTable extends React.Component {
           </Table>
         </div>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5, 8, 10, 25]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}

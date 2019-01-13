@@ -69,23 +69,28 @@ class Root extends React.Component {
 
     ws.onmessage = (event) => {
       const response = JSON.parse(event.data);
+      process.env.NODE_ENV === 'development' &&
+        console.log('WS Received:', response);
       switch (response.request) {
-        default:
-          console.log('WS Received:', response);
-          break;
+        default: break;
         case 'login':
-          this.setState({ shouldLogIn: !response.accepted });
           if (response.accepted) {
+            this.setState({ shouldLogIn: false });
             localStorage.setItem('username', this.state.login.username);
             sessionStorage.setItem('password', this.state.login.password);
-          }
+          } // TODO Handle false
           break;
         case 'data':
           this.setState({ data: response.data });
           break;
-        case 'add_job': break;
       }
     };
+
+    ws.onclose = () => {
+      console.log('Connection closed. Attempting reconnection..');
+      setTimeout(() => this.connectToWS(), 1000);
+    };
+
   };
 
   handleSnackbarClose = () => this.setState({ snackMessage: { open: false, text: '' } });

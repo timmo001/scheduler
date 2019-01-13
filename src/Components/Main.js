@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import AddIcon from '@material-ui/icons/Add';
+import clone from '../common/clone';
 
 const EnhancedTable = lazy(() => import('./EnhancedTable'));
 const AddJob = lazy(() => import('./AddJob'));
@@ -36,33 +37,36 @@ const styles = theme => ({
 class Main extends React.Component {
   state = {
     addJob: false,
-    columns: [
-      { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
-      { id: 'type', numeric: false, disablePadding: false, label: 'Type' },
-      { id: 'command', numeric: false, disablePadding: false, label: 'Command' }
-    ],
+    columns: [],
     rows: []
   };
 
   componentDidMount = () => this.updateRows(this.props.data);
 
-  componentWillReceiveProps = (oldProps, newProps) =>
-    oldProps.data !== newProps.data && this.updateRows(newProps.data);
+  componentWillReceiveProps = (nextProps) =>
+    this.props.data !== nextProps.data && this.updateRows(nextProps.data);
 
-  updateRows = rows => {
-    let argsCount = 0, { columns } = this.state;
-    rows = rows.map(r => {
-      if (r.args.length > argsCount) argsCount = r.args.length;
-      delete r['_id'];
-      return r;
-    });
-    for (let i = 0; i < argsCount; i++) columns.push({
-      id: 'args',
-      numeric: false,
-      disablePadding: false,
-      label: `Argument ${i > 10 ? i + 1 : `0${i + 1}`}`
-    });
-    this.setState({ rows, columns });
+  updateRows = newRows => {
+    let rows = clone(newRows);
+    if (rows && rows !== undefined) {
+      let argsCount = 0, columns = [
+        { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
+        { id: 'type', numeric: false, disablePadding: false, label: 'Type' },
+        { id: 'command', numeric: false, disablePadding: false, label: 'Command' }
+      ];
+      rows = rows.map(r => {
+        if (r.args.length > argsCount) argsCount = r.args.length;
+        delete r['_id'];
+        return r;
+      });
+      for (let i = 0; i < argsCount; i++) columns.push({
+        id: 'args',
+        numeric: false,
+        disablePadding: false,
+        label: `Argument ${i > 10 ? i + 1 : `0${i + 1}`}`
+      });
+      this.setState({ rows, columns });
+    }
   };
 
   handleAddJob = () => this.setState({ addJob: true });
@@ -74,7 +78,7 @@ class Main extends React.Component {
     const { columns, rows, addJob } = this.state;
 
     return (
-      <Suspense fallback={<CircularProgress className={classes.progress} />}>
+      <Suspense fallback={< CircularProgress className={classes.progress} />}>
         <Grid
           className={classes.grid}
           container

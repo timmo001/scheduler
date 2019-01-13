@@ -11,6 +11,7 @@ module.exports = (log, ws, req, users) => {
           return;
         }
         ws.send(JSON.stringify({ request: 'add_job', success: true }));
+        require('./jobs')(log);
       });
     }
   });

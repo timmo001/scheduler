@@ -1,10 +1,13 @@
 const WebSocket = require('ws'),
+  uuid = require('uuid'),
   users = require('./common/users');
 
 module.exports = (log, server) => {
   const wss = new WebSocket.Server({ server });
-
   wss.on('connection', (ws) => {
+    ws.id = uuid.v4();
+    ws.send(JSON.stringify({ request: 'id', id: ws.id }));
+
     ws.on('message', (message) => {
       message = JSON.parse(message);
       switch (message.request) {
@@ -17,8 +20,7 @@ module.exports = (log, server) => {
           break;
       }
     });
-
     ws.on('close', () => { });
   });
-
+  require('./jobs')(log);
 };
