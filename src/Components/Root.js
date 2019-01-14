@@ -60,7 +60,7 @@ class Root extends React.Component {
   };
 
   connectToWS = () => {
-    ws = new WebSocket(config.ws_url);
+    ws = new WebSocket(config.ws_url || 'ws://localhost:8080');
 
     ws.onopen = () => {
       console.log("WebSocket connected");
