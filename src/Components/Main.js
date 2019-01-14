@@ -28,6 +28,9 @@ const styles = theme => ({
     position: 'absolute',
     top: '50%',
     left: '50%'
+  },
+  cardContent: {
+    padding: 0
   }
 });
 
