@@ -13,7 +13,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
+// import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
@@ -67,17 +67,17 @@ class EnhancedTableHead extends React.Component {
                 align={column.numeric ? 'right' : 'left'}
                 padding={column.disablePadding ? 'none' : 'default'}
                 sortDirection={orderBy === column.id ? order : false}>
-                <Tooltip
+                {/* <Tooltip
                   title="Sort"
                   placement={column.numeric ? 'bottom-end' : 'bottom-start'}
-                  enterDelay={300}>
+                  enterDelay={300}> */}
                   <TableSortLabel
                     active={orderBy === column.id}
                     direction={order}
                     onClick={this.createSortHandler(column.id)}>
                     {column.label}
                   </TableSortLabel>
-                </Tooltip>
+                {/* </Tooltip> */}
               </TableCell>
             );
           }, this)}
@@ -145,11 +145,11 @@ let EnhancedTableToolbar = props => {
       <div className={classes.spacer} />
       <div className={classes.actions}>
         {numSelected > 0 ? (
-          <Tooltip title="Delete">
+          // <Tooltip title="Delete">
             <IconButton aria-label="Delete">
               <DeleteIcon />
             </IconButton>
-          </Tooltip>
+          // </Tooltip>
         ) : (
             // <Tooltip title="Filter list">
             <IconButton aria-label="Filter list">
