@@ -52,6 +52,7 @@ class Main extends React.Component {
       let argsCount = 0, columns = [
         { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
         { id: 'type', numeric: false, disablePadding: false, label: 'Type' },
+        { id: 'schedule', numeric: false, disablePadding: false, label: 'Schedule' },
         { id: 'command', numeric: false, disablePadding: false, label: 'Command' }
       ];
       rows = rows.map(r => {

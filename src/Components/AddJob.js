@@ -41,8 +41,8 @@ class AddJob extends React.Component {
   handleClose = () => this.setState({ open: false }, () => this.props.handleClosed());
 
   handleAdd = () => {
-    const { name, type, command, args } = this.state;
-    this.props.handleAddJob(name, type, command, args);
+    const { name, type, schedule, command, args } = this.state;
+    this.props.handleAddJob(name, type, schedule, command, args);
     this.handleClose();
   };
 

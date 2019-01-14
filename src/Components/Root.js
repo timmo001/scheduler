@@ -95,11 +95,11 @@ class Root extends React.Component {
 
   handleSnackbarClose = () => this.setState({ snackMessage: { open: false, text: '' } });
 
-  handleAddJob = (name, type, command, args) =>
+  handleAddJob = (name, type, schedule, command, args) =>
     ws.send(JSON.stringify({
       request: 'add_job',
       login: this.state.login,
-      job: { name, type, command, args }
+      job: { name, type, schedule, command, args }
     }));
 
   render() {
