@@ -13,6 +13,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 
@@ -25,6 +27,9 @@ const styles = theme => ({
   },
   argButton: {
     marginTop: theme.spacing.unit
+  },
+  checkbox: {
+    marginLeft: -5
   }
 });
 
@@ -32,7 +37,8 @@ class AddJob extends React.Component {
   state = {
     open: true,
     name: '',
-    schedule: '0 * * * * *',
+    scheduleConstant: false,
+    schedule: '* 1 * * * *',
     type: 'shell',
     command: '',
     args: ['']
@@ -41,12 +47,18 @@ class AddJob extends React.Component {
   handleClose = () => this.setState({ open: false }, () => this.props.handleClosed());
 
   handleAdd = () => {
-    const { name, type, schedule, command, args } = this.state;
-    this.props.handleAddJob(name, type, schedule, command, args);
+    const { name, type, scheduleConstant, schedule, command, args } = this.state;
+    this.props.handleAddJob(name, type, scheduleConstant ? 'always' : schedule, command, args);
     this.handleClose();
   };
 
   handleChange = name => event => this.setState({ [name]: event.target.value });
+
+  handleCheckedChange = name => event => this.setState({ [name]: event.target.checked });
+
+  handleArgAdd = () => this.setState({ args: this.state.args.push('') });
+
+  handleArgRemove = id => this.setState({ args: this.state.args.splice(id) });
 
   handleArgChange = id => event => {
     let { args } = this.state;
@@ -60,6 +72,7 @@ class AddJob extends React.Component {
       open,
       name,
       // type,
+      scheduleConstant,
       schedule,
       command,
       args
@@ -68,10 +81,10 @@ class AddJob extends React.Component {
       <Suspense fallback={<CircularProgress className={classes.progressRoot} />}>
         <Dialog
           open={open}
-          onClose={this.handleClose}
+          // onClose={this.handleClose}
           aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">Add Job</DialogTitle>
-          <DialogContent>
+          <DialogContent component="form">
             {/* <DialogContentText>
             </DialogContentText> */}
             <TextField
@@ -84,15 +97,29 @@ class AddJob extends React.Component {
               value={name}
               onChange={this.handleChange('name')} />
             <br />
-            <TextField
-              id="schedule"
-              label="Schedule"
-              type="text"
-              margin="dense"
-              className={classNames(classes.margin, classes.textField)}
-              value={schedule}
-              onChange={this.handleChange('schedule')} />
+            <FormControlLabel
+              className={classes.checkbox}
+              control={
+                <Checkbox
+                  checked={scheduleConstant}
+                  onChange={this.handleCheckedChange('scheduleConstant')}
+                  value="scheduleConstant" />
+              }
+              label="Constant" />
             <br />
+            {!scheduleConstant &&
+              <div>
+                <TextField
+                  id="schedule"
+                  label="Schedule"
+                  type="text"
+                  margin="dense"
+                  className={classNames(classes.margin, classes.textField)}
+                  value={schedule}
+                  onChange={this.handleChange('schedule')} />
+                <br />
+              </div>
+            }
             <TextField
               id="command"
               label="Command"
@@ -111,7 +138,10 @@ class AddJob extends React.Component {
                 InputProps={{
                   endAdornment: <InputAdornment position="end">
                     <Tooltip title="Delete argument" aria-label="Delete argument">
-                      <IconButton aria-label="Delete argument" className={classes.margin}>
+                      <IconButton
+                        aria-label="Delete argument"
+                        className={classes.margin}
+                        onClick={this.handleArgRemove}>
                         <DeleteIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
@@ -119,7 +149,10 @@ class AddJob extends React.Component {
                 }} />
             )}
             <Tooltip title="Add argument" aria-label="Add argument">
-              <IconButton aria-label="Add argument" className={classes.argButton}>
+              <IconButton
+                aria-label="Add argument"
+                className={classes.argButton}
+                onClick={this.handleArgAdd}>
                 <AddIcon fontSize="small" />
               </IconButton>
             </Tooltip>

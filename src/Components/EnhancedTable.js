@@ -175,16 +175,19 @@ EnhancedTableToolbar.propTypes = {
 
 EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
 
-const styles = theme => ({
+const styles = () => ({
   root: {
     width: '100%'
   },
   table: {
-    minWidth: 1020,
+    minWidth: 600,
   },
   tableWrapper: {
     overflowX: 'auto',
   },
+  cell: {
+    paddingRight: 24
+  }
 });
 
 class EnhancedTable extends React.Component {
@@ -291,28 +294,33 @@ class EnhancedTable extends React.Component {
                       <TableCell padding="checkbox">
                         <Checkbox checked={isSelected} />
                       </TableCell>
-                      {Object.keys(n).map((x, id) =>
-                        <TableCell
-                          key={id}
-                          align={columns[id].align || 'left'}
-                          padding={columns[id].disablePadding ? 'none' : 'default'}
-                          style={{
-                            background: columns[id].id !== 'status' ? 'initial' :
-                              n.status > 0 ? red[500] :
-                                n.status === 0 && green[500],
-                            whiteSpace: columns[id].noWrap && 'nowrap'
-                          }}>
-                          {columns[id].date ?
-                            moment(n[x]).format('DD/MM/YYYY HH:mm:ss')
-                            : n[x]}
-                        </TableCell>
-                      )}
+                      {Object.keys(n).map((x, id) => {
+                        const numberPos = n.status.indexOf('(') + 1,
+                          statusNumber = Number.parseInt(n.status.substr(numberPos, (n.status.length - 1) - numberPos));
+                        return (
+                          <TableCell
+                            key={id}
+                            align={columns[id].align || 'left'}
+                            padding={columns[id].disablePadding ? 'none' : 'default'}
+                            className={classes.cell}
+                            style={{
+                              background: columns[id].id !== 'status' ? 'initial' :
+                                statusNumber > 0 ? red[500] :
+                                  statusNumber === 0 && green[500],
+                              whiteSpace: columns[id].noWrap && 'nowrap'
+                            }}>
+                            {columns[id].date && n[x] ?
+                              moment(n[x]).format('DD/MM/YYYY HH:mm:ss')
+                              : n[x]}
+                          </TableCell>
+                        );
+                      })}
                     </TableRow>
                   );
                 })}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 49 * emptyRows }}>
-                  <TableCell colSpan={6} />
+                  <TableCell colSpan={columns.length + 1} />
                 </TableRow>
               )}
             </TableBody>

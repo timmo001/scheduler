@@ -57,6 +57,11 @@ class Main extends React.Component {
       ];
       rows = rows.map(r => {
         if (r.args.length > argsCount) argsCount = r.args.length;
+        if (r.schedule === 'always') r.schedule = 'Constantly Running';
+        r.status = r.status > 0 ? `Error (${r.status})` :
+          r.status === 0 ? `Completed Successfully (${r.status})` :
+            r.status === -1 ? `Running (${r.status})` :
+              `Not Ran yet (-2)`;
         delete r['_id'];
         return r;
       });

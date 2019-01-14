@@ -64,7 +64,7 @@ class Root extends React.Component {
 
     ws.onopen = () => {
       console.log("WebSocket connected");
-      this.setState({ connected: true, shouldLogIn: true });
+      this.setState({ connected: true, shouldLogIn: true, snackMessage: { open: false, text: '' } });
     };
 
     ws.onmessage = (event) => {
@@ -87,7 +87,15 @@ class Root extends React.Component {
     };
 
     ws.onclose = () => {
-      console.log('Connection closed. Attempting reconnection..');
+      console.log('WS - Connection closed. Attempting reconnection..');
+      !this.state.snackMessage.text === 'Connection Lost. Attempting to reconnect..' &&
+        this.setState({
+          snackMessage: {
+            open: true,
+            text: 'Connection Lost. Attempting to reconnect..',
+            persistent: true
+          }
+        });
       setTimeout(() => this.connectToWS(), 1000);
     };
 
@@ -99,7 +107,13 @@ class Root extends React.Component {
     ws.send(JSON.stringify({
       request: 'add_job',
       login: this.state.login,
-      job: { name, type, schedule, command, args }
+      job: {
+        name, type, schedule, command, args,
+        last_run: '',
+        status: -2,
+        output: '',
+        error: ''
+      }
     }));
 
   render() {
