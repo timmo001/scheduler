@@ -53,7 +53,7 @@ class Main extends React.Component {
         { id: 'name', label: 'Name' },
         { id: 'type', label: 'Type' },
         { id: 'schedule', label: 'Schedule' },
-        { id: 'command', label: 'Command', disablePadding: true }
+        { id: 'command', label: 'Command' }
       ];
       rows = rows.map(r => {
         if (r.args.length > argsCount) argsCount = r.args.length;
@@ -65,10 +65,10 @@ class Main extends React.Component {
         label: `Argument ${i > 10 ? i + 1 : `0${i + 1}`}`,
         disablePadding: true
       });
-      columns.push({ id: 'last_run', label: 'Last Run', date: true, align: 'center' });
+      columns.push({ id: 'last_run', label: 'Last Run', date: true });
       columns.push({ id: 'status', label: 'Status' });
-      columns.push({ id: 'output', label: 'Output' });
-      columns.push({ id: 'error', label: 'Errors' });
+      columns.push({ id: 'output', label: 'Output', noWrap: true });
+      columns.push({ id: 'error', label: 'Error Output', noWrap: true });
       this.setState({ rows, columns });
     }
   };
@@ -93,7 +93,7 @@ class Main extends React.Component {
               <CardContent className={classes.cardContent} align="right">
                 {rows &&
                   <EnhancedTable
-                    title={`Jobs: ${rows.length}`}
+                    title="Jobs"
                     columns={columns}
                     rows={rows}
                     handleAdd={this.handleAddJob} />

@@ -69,7 +69,8 @@ class EnhancedTableHead extends React.Component {
                 key={column.id}
                 align={column.align || 'left'}
                 padding={column.disablePadding ? 'none' : 'default'}
-                sortDirection={orderBy === column.id ? order : false}>
+                sortDirection={orderBy === column.id ? order : false}
+                style={{ whiteSpace: column.noWrap && 'nowrap' }}>
                 {/* <Tooltip
                   title="Sort"
                   placement={column.numeric ? 'bottom-end' : 'bottom-start'}
@@ -298,7 +299,8 @@ class EnhancedTable extends React.Component {
                           style={{
                             background: columns[id].id !== 'status' ? 'initial' :
                               n.status > 0 ? red[500] :
-                                n.status === 0 && green[500]
+                                n.status === 0 && green[500],
+                            whiteSpace: columns[id].noWrap && 'nowrap'
                           }}>
                           {columns[id].date ?
                             moment(n[x]).format('DD/MM/YYYY HH:mm:ss')
