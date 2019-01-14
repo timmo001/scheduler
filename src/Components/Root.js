@@ -88,7 +88,7 @@ class Root extends React.Component {
 
     ws.onclose = () => {
       console.log('WS - Connection closed. Attempting reconnection..');
-      !this.state.snackMessage.text === 'Connection Lost. Attempting to reconnect..' &&
+      !this.state.snackMessage.open &&
         this.setState({
           snackMessage: {
             open: true,
@@ -96,7 +96,9 @@ class Root extends React.Component {
             persistent: true
           }
         });
-      setTimeout(() => this.connectToWS(), 1000);
+      setTimeout(() => {
+        this.connectToWS();
+      }, 4000);
     };
 
   };
