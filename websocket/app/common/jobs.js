@@ -2,7 +2,7 @@ const Datastore = require('nedb');
 
 const db = new Datastore({ filename: process.env.JOBS_DB_PATH || 'jobs.db', autoload: true });
 
-const addJob = (log, ws, job, cb) =>
+const addJob = (job, cb) =>
   db.insert(job, (err) => {
     if (err) cb(err);
     else cb(null);
