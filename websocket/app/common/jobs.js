@@ -5,10 +5,7 @@ const db = new Datastore({ filename: process.env.JOBS_DB_PATH || 'jobs.db', auto
 const addJob = (log, ws, job, cb) =>
   db.insert(job, (err) => {
     if (err) cb(err);
-    else {
-      sendJobs(log, ws);
-      cb(null);
-    }
+    else cb(null);
   });
 
 const updateJob = (job, cb) =>

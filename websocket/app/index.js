@@ -31,7 +31,7 @@ module.exports = (log, server) => {
           }, {});
         case 'add_job':
           return checkUser(log, message.login, err =>
-            !err && require('./addJob')(log, ws, message, () => {
+            !err && require('./addJob')(log, ws, message, removeConnection, () => {
               connections.map(c => jobs.sendJobs(log, c.ws, true, removeConnection));
             }, {})
           );
