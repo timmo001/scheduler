@@ -82,7 +82,7 @@ class Main extends React.Component {
     const { columns, rows, addJob } = this.state;
 
     return (
-      <Suspense fallback={< CircularProgress className={classes.progress} />}>
+      <Suspense fallback={<CircularProgress className={classes.progress} />}>
         <Grid
           className={classes.grid}
           container
