@@ -50,7 +50,7 @@ class Main extends React.Component {
         { id: 'name', label: 'Name' },
         { id: 'type', label: 'Type' },
         { id: 'schedule', label: 'Schedule' },
-        { id: 'command', label: 'Command' }
+        { id: 'command', label: 'Command', disablePadding: true }
       ];
       rows = rows.map(r => {
         if (r.args.length > argsCount) argsCount = r.args.length;
@@ -59,9 +59,8 @@ class Main extends React.Component {
       });
       for (let i = 0; i < argsCount; i++) columns.push({
         id: 'args',
-        numeric: false,
-        disablePadding: false,
-        label: `Argument ${i > 10 ? i + 1 : `0${i + 1}`}`
+        label: `Argument ${i > 10 ? i + 1 : `0${i + 1}`}`,
+        disablePadding: true
       });
       columns.push({ id: 'last_run', label: 'Last Run', date: true, align: 'center' });
       columns.push({ id: 'status', label: 'Status' });
