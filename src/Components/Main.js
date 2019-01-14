@@ -88,7 +88,7 @@ class Main extends React.Component {
           container
           alignItems="center"
           justify="center">
-          <Grid item lg={8} md={8} sm={10} xs={12}>
+          <Grid item xs>
             <Card className={classes.card} align="center">
               <CardContent className={classes.cardContent} align="right">
                 {rows &&
