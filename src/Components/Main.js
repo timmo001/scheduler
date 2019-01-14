@@ -2,12 +2,9 @@ import React, { lazy, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Fab from '@material-ui/core/Fab';
-// import Tooltip from '@material-ui/core/Tooltip';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import AddIcon from '@material-ui/icons/Add';
 import clone from '../common/clone';
 
 const EnhancedTable = lazy(() => import('./EnhancedTable'));
@@ -50,10 +47,10 @@ class Main extends React.Component {
     let rows = clone(newRows);
     if (rows && rows !== undefined) {
       let argsCount = 0, columns = [
-        { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
-        { id: 'type', numeric: false, disablePadding: false, label: 'Type' },
-        { id: 'schedule', numeric: false, disablePadding: false, label: 'Schedule' },
-        { id: 'command', numeric: false, disablePadding: false, label: 'Command' }
+        { id: 'name', label: 'Name' },
+        { id: 'type', label: 'Type' },
+        { id: 'schedule', label: 'Schedule' },
+        { id: 'command', label: 'Command' }
       ];
       rows = rows.map(r => {
         if (r.args.length > argsCount) argsCount = r.args.length;
@@ -66,6 +63,10 @@ class Main extends React.Component {
         disablePadding: false,
         label: `Argument ${i > 10 ? i + 1 : `0${i + 1}`}`
       });
+      columns.push({ id: 'last_run', label: 'Last Run', date: true, align: 'center' });
+      columns.push({ id: 'status', label: 'Status' });
+      columns.push({ id: 'output', label: 'Output' });
+      columns.push({ id: 'error', label: 'Errors' });
       this.setState({ rows, columns });
     }
   };
@@ -88,16 +89,12 @@ class Main extends React.Component {
           <Grid item lg={8} md={8} sm={10} xs={12}>
             <Card className={classes.card} align="center">
               <CardContent className={classes.cardContent} align="right">
-                {/* <Tooltip title="Add Job" aria-label="Add Job"> */}
-                <Fab color="primary" className={classes.fab} size="small" onClick={this.handleAddJob}>
-                  <AddIcon />
-                </Fab>
-                {/* </Tooltip> */}
                 {rows &&
                   <EnhancedTable
                     title={`Jobs: ${rows.length}`}
                     columns={columns}
-                    rows={rows} />
+                    rows={rows}
+                    handleAdd={this.handleAddJob} />
                 }
               </CardContent>
             </Card>

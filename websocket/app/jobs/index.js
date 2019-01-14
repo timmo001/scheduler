@@ -1,5 +1,6 @@
 const scheduler = require('node-schedule'),
-  { spawn } = require('child_process');
+  { spawn } = require('child_process'),
+  moment = require('moment');
 
 module.exports = (log) => {
   const jobs = require('../common/jobs');
@@ -9,10 +10,13 @@ module.exports = (log) => {
       const { name, command, schedule, args, cwd } = job;
       log.debug(`JOBS: Job: ${name} - `, job);
       return scheduler.scheduleJob(schedule, () => {
-        log.info(`JOBS: Start ${name}`);
+        job.last_run = moment().format();
+        job.status = -1;
         job.output = '';
         job.error = '';
-        job.status = -1;
+
+        log.info(`JOBS: Start ${name}`);
+
         let spawnedJob = spawn(command, args, { cwd, shell: true });
         spawnedJob.stdout.on('data', (data) => {
           log.debug(`JOBS: ${name} - ${data}`);

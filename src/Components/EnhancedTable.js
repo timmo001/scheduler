@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -12,11 +13,13 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Checkbox from '@material-ui/core/Checkbox';
+import Fab from '@material-ui/core/Fab';
 import IconButton from '@material-ui/core/IconButton';
 // import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
+import { red, green } from '@material-ui/core/colors';
+import AddIcon from '@material-ui/icons/Add';
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -64,19 +67,19 @@ class EnhancedTableHead extends React.Component {
             return (
               <TableCell
                 key={column.id}
-                align={column.numeric ? 'right' : 'left'}
+                align={column.align || 'left'}
                 padding={column.disablePadding ? 'none' : 'default'}
                 sortDirection={orderBy === column.id ? order : false}>
                 {/* <Tooltip
                   title="Sort"
                   placement={column.numeric ? 'bottom-end' : 'bottom-start'}
                   enterDelay={300}> */}
-                  <TableSortLabel
-                    active={orderBy === column.id}
-                    direction={order}
-                    onClick={this.createSortHandler(column.id)}>
-                    {column.label}
-                  </TableSortLabel>
+                <TableSortLabel
+                  active={orderBy === column.id}
+                  direction={order}
+                  onClick={this.createSortHandler(column.id)}>
+                  {column.label}
+                </TableSortLabel>
                 {/* </Tooltip> */}
               </TableCell>
             );
@@ -124,7 +127,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-  const { classes, numSelected, title } = props;
+  const { classes, numSelected, title, handleAdd } = props;
 
   return (
     <Toolbar
@@ -146,15 +149,15 @@ let EnhancedTableToolbar = props => {
       <div className={classes.actions}>
         {numSelected > 0 ? (
           // <Tooltip title="Delete">
-            <IconButton aria-label="Delete">
-              <DeleteIcon />
-            </IconButton>
+          <IconButton aria-label="Delete">
+            <DeleteIcon />
+          </IconButton>
           // </Tooltip>
         ) : (
             // <Tooltip title="Filter list">
-            <IconButton aria-label="Filter list">
-              <FilterListIcon />
-            </IconButton>
+            <Fab color="primary" className={classes.fab} size="small" onClick={handleAdd}>
+              <AddIcon />
+            </Fab>
             // </Tooltip>
           )}
       </div>
@@ -165,6 +168,7 @@ let EnhancedTableToolbar = props => {
 EnhancedTableToolbar.propTypes = {
   classes: PropTypes.object.isRequired,
   numSelected: PropTypes.number.isRequired,
+  handleAdd: PropTypes.func.isRequired,
   title: PropTypes.string
 };
 
@@ -202,7 +206,7 @@ class EnhancedTable extends React.Component {
 
   updateRows = rows => this.setState({ rows });
 
-  handleRequestSort = (event, property) => {
+  handleRequestSort = (_event, property) => {
     const orderBy = property;
     let order = 'desc';
 
@@ -215,13 +219,13 @@ class EnhancedTable extends React.Component {
 
   handleSelectAllClick = event => {
     if (event.target.checked) {
-      this.setState(state => ({ selected: state.rows.map(n => n.id) }));
+      this.setState(state => ({ selected: state.rows.map((_n, id) => id) }));
       return;
     }
     this.setState({ selected: [] });
   };
 
-  handleClick = (event, id) => {
+  handleClick = (_event, id) => {
     const { selected } = this.state;
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
@@ -242,7 +246,7 @@ class EnhancedTable extends React.Component {
     this.setState({ selected: newSelected });
   };
 
-  handleChangePage = (event, page) => {
+  handleChangePage = (_event, page) => {
     this.setState({ page });
   };
 
@@ -253,14 +257,14 @@ class EnhancedTable extends React.Component {
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
   render() {
-    const { classes, title, columns } = this.props;
+    const { classes, title, columns, handleAdd } = this.props;
     const { order, orderBy, selected, rowsPerPage, page, rows } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows ? rows.length : 0 - page * rowsPerPage);
 
     if (!rows) return null
     else return (
       <div className={classes.root}>
-        <EnhancedTableToolbar numSelected={selected.length} title={title} />
+        <EnhancedTableToolbar numSelected={selected.length} title={title} handleAdd={handleAdd} />
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -276,12 +280,12 @@ class EnhancedTable extends React.Component {
               {stableSort(rows, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((n, id) => {
-                  const isSelected = this.isSelected(n.id);
+                  const isSelected = this.isSelected(id);
                   return (
                     <TableRow
                       key={id}
                       hover
-                      onClick={event => this.handleClick(event, n.id)}
+                      onClick={event => this.handleClick(event, id)}
                       role="checkbox"
                       aria-checked={isSelected}
                       tabIndex={-1}
@@ -290,7 +294,19 @@ class EnhancedTable extends React.Component {
                         <Checkbox checked={isSelected} />
                       </TableCell>
                       {Object.keys(n).map((x, id) =>
-                        <TableCell key={id}>{n[x]}</TableCell>
+                        <TableCell
+                          key={id}
+                          align={columns[id].align || 'left'}
+                          padding={columns[id].disablePadding ? 'none' : 'default'}
+                          style={{
+                            background: columns[id].id !== 'status' ? 'initial' :
+                              n.status > 0 ? red[500] :
+                                n.status === 0 && green[500]
+                          }}>
+                          {columns[id].date ?
+                            moment(n[x]).format('DD/MM/YYYY HH:mm:ss')
+                            : n[x]}
+                        </TableCell>
                       )}
                     </TableRow>
                   );
@@ -326,6 +342,7 @@ EnhancedTable.propTypes = {
   classes: PropTypes.object.isRequired,
   columns: PropTypes.array.isRequired,
   rows: PropTypes.array.isRequired,
+  handleAdd: PropTypes.func.isRequired,
   title: PropTypes.string
 };
 

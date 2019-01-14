@@ -12,7 +12,7 @@ const addJob = (log, ws, job, cb) =>
   });
 
 const updateJob = (job, cb) =>
-  db.update({ _id: job._id }, job, {}, err => err ? cb(err) : cb(null));
+  db.update({ _id: job._id }, job, { multi: false, upsert: false, returnUpdatedDocs: false }, err => err ? cb(err) : cb(null));
 
 const getJobs = () => db.getAllData();
 
