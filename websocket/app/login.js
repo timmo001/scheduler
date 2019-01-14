@@ -1,6 +1,4 @@
-const jobs = require('./common/jobs');
-
-module.exports = (log, ws, req, users) => {
+module.exports = (log, ws, req, users, cb) => {
   users.getUser(req.login, true, (err, user) => {
     if (err) {
       log.error('WS - ', err);
@@ -9,6 +7,6 @@ module.exports = (log, ws, req, users) => {
     }
     log.debug(`WS - User ${user.username} found.`);
     ws.send(JSON.stringify({ request: 'login', accepted: true }));
-    jobs.sendJobs(log, ws);
+    cb(user);
   });
 };

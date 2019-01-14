@@ -44,14 +44,17 @@ const shell = (log, job, cb) => {
     scheduler.scheduleJob(schedule, () => shellSpawn(log, job, cb));
 };
 
-module.exports = log => {
+module.exports = (log, connections, removeConnection) => {
   const jobs = require('../common/jobs');
   setTimeout(() => {
     log.info('JOBS: Start jobs..');
     jobs.getJobs().map(job => {
       switch (job.type) {
         default:
-          return shell(log, job, jobRet => jobs.updateJob(jobRet, err => err && log.error('Error updating job: ', err)));
+          return shell(log, job, jobRet => jobs.updateJob(jobRet, err => {
+            err && log.error('Error updating job: ', err);
+            connections.map(c => jobs.sendJobs(log, c.ws, true, removeConnection));
+          }));
       }
     });
   }, 1000);

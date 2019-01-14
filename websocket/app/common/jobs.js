@@ -16,21 +16,25 @@ const updateJob = (job, cb) =>
 
 const getJobs = () => db.getAllData();
 
-const sendJobs = (log, ws) => {
+const sendJobs = (log, ws, once, removeConnection) => {
   try {
     ws.send(JSON.stringify({ request: 'data', data: getJobs() }));
   } catch (e) {
     log.error(`WS - Error when sending jobs for ${ws.id}: `, e.message);
+    removeConnection(ws.id);
   }
-  let sendJobTimeout = setInterval(() => {
-    log.debug(`WS - Send jobs.. (${ws.id})`);
-    try {
-      ws.send(JSON.stringify({ request: 'data', data: getJobs() }));
-    } catch (e) {
-      log.error(`WS - Error when sending jobs for ${ws.id}: `, e.message);
-      clearInterval(sendJobTimeout);
-    }
-  }, process.env.SEND_JOB_INTERVAL || 10000);
+  if (!once) {
+    let sendJobTimeout = setInterval(() => {
+      log.debug(`WS - Send jobs.. (${ws.id})`);
+      try {
+        ws.send(JSON.stringify({ request: 'data', data: getJobs() }));
+      } catch (e) {
+        log.error(`WS - Error when sending jobs for ${ws.id}: `, e.message);
+        clearInterval(sendJobTimeout);
+        removeConnection(ws.id);
+      }
+    }, process.env.SEND_JOB_INTERVAL || 10000);
+  }
 };
 
 module.exports = {

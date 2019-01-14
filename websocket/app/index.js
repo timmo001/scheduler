@@ -1,6 +1,17 @@
 const WebSocket = require('ws'),
   uuid = require('uuid'),
-  users = require('./common/users');
+  users = require('./common/users'),
+  jobs = require('./common/jobs'),
+  connections = [];
+
+const removeConnection = id =>
+  connections.splice(connections.findIndex(c => c.ws.id === id));
+
+const checkUser = (log, login, cb) =>
+  users.getUser(login, true, (err, user) => {
+    log.debug(`WS - User ${user.username} found.`);
+    cb(err);
+  });
 
 module.exports = (log, server) => {
   const wss = new WebSocket.Server({ server });
@@ -12,16 +23,21 @@ module.exports = (log, server) => {
     ws.on('message', (message) => {
       message = JSON.parse(message);
       switch (message.request) {
-        default: break;
+        default: return;
         case 'login':
-          require('./login')(log, ws, message, users, {});
-          break;
+          return require('./login')(log, ws, message, users, (user) => {
+            connections.push({ user, ws });
+            jobs.sendJobs(log, ws, true, removeConnection);
+          }, {});
         case 'add_job':
-          require('./addJob')(log, ws, message, users, {});
-          break;
+          return checkUser(log, message.login, err =>
+            !err && require('./addJob')(log, ws, message, () => {
+              connections.map(c => jobs.sendJobs(log, c.ws, true, removeConnection));
+            }, {})
+          );
       }
     });
     ws.on('close', () => { });
   });
-  require('./jobs')(log);
+  require('./jobs')(log, connections, removeConnection);
 };
