@@ -22,6 +22,7 @@ import { red, green } from '@material-ui/core/colors';
 import AddIcon from '@material-ui/icons/Add';
 
 function desc(a, b, orderBy) {
+  if (!a || !b) return 0;
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }
@@ -292,7 +293,7 @@ class EnhancedTable extends React.Component {
                       tabIndex={-1}
                       selected={isSelected}>
                       <TableCell padding="checkbox">
-                        <Checkbox checked={isSelected} />
+                        <Checkbox checked={isSelected === undefined || isSelected === null ? false : isSelected} />
                       </TableCell>
                       {Object.keys(n).map((x, id) => {
                         const numberPos = n.status.indexOf('(') + 1,

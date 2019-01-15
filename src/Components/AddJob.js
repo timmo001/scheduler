@@ -38,7 +38,7 @@ class AddJob extends React.Component {
     open: true,
     name: '',
     scheduleConstant: false,
-    schedule: '* 1 * * * *',
+    schedule: '0 * * * * *',
     type: 'shell',
     command: '',
     args: ['']

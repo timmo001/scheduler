@@ -56,6 +56,7 @@ class Main extends React.Component {
         { id: 'command', label: 'Command' }
       ];
       rows = rows.map(r => {
+        if (!r.args) return null;
         if (r.args.length > argsCount) argsCount = r.args.length;
         if (r.schedule === 'always') r.schedule = 'Constantly Running';
         r.status = r.status > 0 ? `Error (${r.status})` :
