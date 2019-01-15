@@ -2,6 +2,7 @@ const WebSocket = require('ws'),
   uuid = require('uuid'),
   users = require('./common/users'),
   jobs = require('./common/jobs'),
+  jobsRunner = require('./jobs'),
   connections = [];
 
 const removeConnection = id =>
@@ -32,6 +33,7 @@ module.exports = (log, server) => {
         case 'add_job':
           return checkUser(log, message.login, err =>
             !err && require('./addJob')(log, ws, message, removeConnection, () => {
+              jobsRunner.startNewJobs(log, connections, removeConnection);
               connections.map(c => jobs.sendJobs(log, c.ws, true, removeConnection));
             }, {})
           );
@@ -39,5 +41,5 @@ module.exports = (log, server) => {
     });
     ws.on('close', () => { });
   });
-  require('./jobs')(log, connections, removeConnection);
+  jobsRunner.startAllJobs(log, connections, removeConnection);
 };

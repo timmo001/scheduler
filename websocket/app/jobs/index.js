@@ -1,6 +1,7 @@
 const scheduler = require('node-schedule'),
   { spawn } = require('child_process'),
-  moment = require('moment');
+  moment = require('moment'),
+  runningJobs = [];
 
 const shellSpawn = (log, job, cb) => {
   job.last_run = moment().format();
@@ -37,25 +38,40 @@ const shellSpawn = (log, job, cb) => {
 
 
 const shell = (log, job, cb) => {
-  const { name, schedule } = job;
-  log.debug(`JOBS: Job: ${name} - `, job);
+  const { schedule } = job;
   job.schedule === 'always' ?
     shellSpawn(log, job, cb) :
     scheduler.scheduleJob(schedule, () => shellSpawn(log, job, cb));
 };
 
-module.exports = (log, connections, removeConnection) => {
-  const jobs = require('../common/jobs');
+const startJob = (log, connections, job, removeConnection) => {
+  log.info('JOBS: Add Job: ', job.name);
+  runningJobs.push(job);
+  switch (job.type) {
+    default:
+      return shell(log, job, jobRet => require('../common/jobs').updateJob(jobRet, err => {
+        if (err) { log.error('Error updating job: ', err); return; }
+        connections.map(c => require('../common/jobs').sendJobs(log, c.ws, true, removeConnection));
+      }));
+  }
+};
+
+const startAllJobs = (log, connections, removeConnection) => {
   setTimeout(() => {
     log.info('JOBS: Start jobs..');
-    jobs.getJobs().map(job => {
-      switch (job.type) {
-        default:
-          return shell(log, job, jobRet => jobs.updateJob(jobRet, err => {
-            err && log.error('Error updating job: ', err);
-            connections.map(c => jobs.sendJobs(log, c.ws, true, removeConnection));
-          }));
-      }
-    });
+    require('../common/jobs').getJobs().map(job => startJob(log, connections, job, removeConnection));
   }, 1000);
+};
+
+const startNewJobs = (log, connections, removeConnection) => {
+  log.info('JOBS: Start New jobs..');
+  require('../common/jobs').getJobs().map(job => {
+    if (runningJobs.find(j => j['_id'] === job['_id'])) return null;
+    return startJob(log, connections, job, removeConnection);
+  });
+};
+
+module.exports = {
+  startAllJobs,
+  startNewJobs
 };
