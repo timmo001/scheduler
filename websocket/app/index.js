@@ -37,6 +37,14 @@ module.exports = (log, server) => {
               connections.map(c => jobs.sendJobs(log, c.ws, true, removeConnection));
             }, {})
           );
+        case 'delete_jobs':
+          return checkUser(log, message.login, err =>
+            !err && require('./addJob')(log, ws, message, removeConnection, () => {
+              jobsRunner.removeJobs(log, message.jobs, () =>
+                connections.map(c => jobs.sendJobs(log, c.ws, true, removeConnection))
+              );
+            }, {})
+          );
       }
     });
     ws.on('close', () => { });

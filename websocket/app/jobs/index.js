@@ -71,7 +71,13 @@ const startNewJobs = (log, connections, removeConnection) => {
   });
 };
 
+const removeJobs = (log, jobs, cb) => {
+  log.info('JOBS: Remove jobs..');
+  require('../common/jobs').removeJobs(jobs, cb);
+};
+
 module.exports = {
   startAllJobs,
-  startNewJobs
+  startNewJobs,
+  removeJobs
 };

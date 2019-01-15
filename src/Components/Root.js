@@ -118,6 +118,17 @@ class Root extends React.Component {
       }
     }));
 
+  handleDeleteJob = ids => {
+    console.log('deleteJob')
+    const jobs = [];
+    ids.map(id => jobs.push(this.state.data[id]));
+    ws.send(JSON.stringify({
+      request: 'delete_jobs',
+      login: this.state.login,
+      jobs
+    }));
+  };
+
   render() {
     const { handleLogIn } = this;
     const { classes } = this.props;
@@ -132,7 +143,8 @@ class Root extends React.Component {
             data ?
               <Main
                 data={data}
-                handleAddJob={this.handleAddJob} />
+                handleAddJob={this.handleAddJob}
+                handleDeleteJob={this.handleDeleteJob} />
               :
               <div className={classes.center}>
                 <CircularProgress className={classes.progress} />

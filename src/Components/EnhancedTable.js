@@ -129,7 +129,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-  const { classes, numSelected, title, handleAdd } = props;
+  const { classes, numSelected, title, handleAdd, handleDelete } = props;
 
   return (
     <Toolbar
@@ -151,7 +151,7 @@ let EnhancedTableToolbar = props => {
       <div className={classes.actions}>
         {numSelected > 0 ? (
           // <Tooltip title="Delete">
-          <IconButton aria-label="Delete">
+          <IconButton aria-label="Delete" onClick={handleDelete}>
             <DeleteIcon />
           </IconButton>
           // </Tooltip>
@@ -171,6 +171,7 @@ EnhancedTableToolbar.propTypes = {
   classes: PropTypes.object.isRequired,
   numSelected: PropTypes.number.isRequired,
   handleAdd: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
   title: PropTypes.string
 };
 
@@ -258,6 +259,8 @@ class EnhancedTable extends React.Component {
 
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
+  handleDelete = () => this.props.handleDelete(this.state.selected);
+
   render() {
     const { classes, title, columns, handleAdd } = this.props;
     const { order, orderBy, selected, rowsPerPage, page, rows } = this.state;
@@ -266,7 +269,11 @@ class EnhancedTable extends React.Component {
     if (!rows) return null
     else return (
       <div className={classes.root}>
-        <EnhancedTableToolbar numSelected={selected.length} title={title} handleAdd={handleAdd} />
+        <EnhancedTableToolbar
+        numSelected={selected.length}
+        title={title}
+        handleAdd={handleAdd}
+        handleDelete={this.handleDelete} />
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -351,6 +358,7 @@ EnhancedTable.propTypes = {
   columns: PropTypes.array.isRequired,
   rows: PropTypes.array.isRequired,
   handleAdd: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
   title: PropTypes.string
 };
 

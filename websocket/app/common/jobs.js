@@ -34,9 +34,13 @@ const sendJobs = (log, ws, once, removeConnection) => {
   }
 };
 
+const removeJobs = (jobs, cb) => jobs.map(job =>
+  db.remove({ _id: job._id }, job, {}, err => err ? cb(err) : cb(null)));
+
 module.exports = {
   addJob,
   updateJob,
   getJobs,
-  sendJobs
+  sendJobs,
+  removeJobs
 };

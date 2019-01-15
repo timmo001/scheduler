@@ -84,7 +84,7 @@ class Main extends React.Component {
   handleAddJobClosed = () => this.setState({ addJob: false });
 
   render() {
-    const { classes } = this.props;
+    const { classes, handleAddJob, handleDeleteJob } = this.props;
     const { columns, rows, addJob } = this.state;
 
     return (
@@ -102,7 +102,8 @@ class Main extends React.Component {
                     title="Jobs"
                     columns={columns}
                     rows={rows}
-                    handleAdd={this.handleAddJob} />
+                    handleAdd={this.handleAddJob}
+                    handleDelete={handleDeleteJob} />
                 }
               </CardContent>
             </Card>
@@ -111,7 +112,7 @@ class Main extends React.Component {
         {addJob &&
           <AddJob
             handleClosed={this.handleAddJobClosed}
-            handleAddJob={this.props.handleAddJob} />
+            handleAddJob={handleAddJob} />
         }
       </Suspense>
     );
@@ -122,7 +123,8 @@ class Main extends React.Component {
 Main.propTypes = {
   classes: PropTypes.object.isRequired,
   data: PropTypes.array.isRequired,
-  handleAddJob: PropTypes.func.isRequired
+  handleAddJob: PropTypes.func.isRequired,
+  handleDeleteJob: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(Main);
