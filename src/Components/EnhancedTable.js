@@ -195,7 +195,7 @@ const styles = () => ({
 class EnhancedTable extends React.Component {
   state = {
     order: 'asc',
-    orderBy: 'id',
+    orderBy: 'name',
     selected: [],
     page: 0,
     rowsPerPage: 8,
@@ -245,7 +245,6 @@ class EnhancedTable extends React.Component {
         selected.slice(selectedIndex + 1),
       );
     }
-
     this.setState({ selected: newSelected });
   };
 
@@ -259,7 +258,12 @@ class EnhancedTable extends React.Component {
 
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
-  handleDelete = () => this.props.handleDelete(this.state.selected);
+  handleDelete = () => {
+    this.props.handleDelete(this.state.selected.map(s =>
+      this.state.rows.find(r => r === s)
+    ));
+    this.setState({ selected: [] });
+  };
 
   render() {
     const { classes, title, columns, handleAdd } = this.props;
@@ -270,10 +274,10 @@ class EnhancedTable extends React.Component {
     else return (
       <div className={classes.root}>
         <EnhancedTableToolbar
-        numSelected={selected.length}
-        title={title}
-        handleAdd={handleAdd}
-        handleDelete={this.handleDelete} />
+          numSelected={selected.length}
+          title={title}
+          handleAdd={handleAdd}
+          handleDelete={this.handleDelete} />
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -289,12 +293,12 @@ class EnhancedTable extends React.Component {
               {stableSort(rows, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((n, id) => {
-                  const isSelected = this.isSelected(id);
+                  const isSelected = this.isSelected(n);
                   return (
                     <TableRow
                       key={id}
                       hover
-                      onClick={event => this.handleClick(event, id)}
+                      onClick={event => this.handleClick(event, n)}
                       role="checkbox"
                       aria-checked={isSelected}
                       tabIndex={-1}
@@ -305,7 +309,8 @@ class EnhancedTable extends React.Component {
                       {Object.keys(n).map((x, id) => {
                         const numberPos = n.status.indexOf('(') + 1,
                           statusNumber = Number.parseInt(n.status.substr(numberPos, (n.status.length - 1) - numberPos));
-                        return (
+                        if (!columns[id]) return null;
+                        else return (
                           <TableCell
                             key={id}
                             align={columns[id].align || 'left'}

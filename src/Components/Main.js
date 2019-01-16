@@ -63,7 +63,6 @@ class Main extends React.Component {
           r.status === 0 ? `Completed Successfully (${r.status})` :
             r.status === -1 ? `Running (${r.status})` :
               `Not Ran yet (-2)`;
-        delete r['_id'];
         return r;
       });
       for (let i = 0; i < argsCount; i++) columns.push({

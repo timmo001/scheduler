@@ -118,10 +118,8 @@ class Root extends React.Component {
       }
     }));
 
-  handleDeleteJob = ids => {
-    console.log('deleteJob')
-    const jobs = [];
-    ids.map(id => jobs.push(this.state.data[id]));
+  handleDeleteJob = jobs => {
+    jobs = jobs.map(j => j['_id']);
     ws.send(JSON.stringify({
       request: 'delete_jobs',
       login: this.state.login,

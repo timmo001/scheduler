@@ -12,30 +12,29 @@ const shellSpawn = (log, job, cb) => {
   const { name, command, args, cwd } = job;
   log.info(`JOBS: Start ${name}`);
 
-  let spawnedJob = spawn(command, args, { cwd, shell: true });
+  job.spawnedJob = spawn(command, args, { cwd, shell: true });
   job.status = -1;
-  spawnedJob.stdout.on('data', (data) => {
+  job.spawnedJob.stdout.on('data', (data) => {
     log.debug(`JOBS: ${name} - ${data}`);
     job.output += data;
     cb(job);
   });
-  spawnedJob.stderr.on('data', (data) => {
+  job.spawnedJob.stderr.on('data', (data) => {
     log.error(`JOBS: ${name} - ${data}`);
     job.error += data;
     cb(job);
   });
-  spawnedJob.on('error', (data) => {
+  job.spawnedJob.on('error', (data) => {
     log.error(`JOBS: ${name} - ${data}`);
     job.error += data;
     cb(job);
   });
-  spawnedJob.on('close', (code) => {
+  job.spawnedJob.on('close', (code) => {
     log.info(`JOBS: ${name} exited with code ${code}`);
     job.status = code;
     cb(job);
   });
 };
-
 
 const shell = (log, job, cb) => {
   const { schedule } = job;
@@ -73,7 +72,18 @@ const startNewJobs = (log, connections, removeConnection) => {
 
 const removeJobs = (log, jobs, cb) => {
   log.info('JOBS: Remove jobs..');
-  require('../common/jobs').removeJobs(jobs, cb);
+  require('../common/jobs').removeJobs(jobs, () =>
+    jobs.map(id => {
+      const jobId = runningJobs.findIndex(j => j['_id'] === id);
+      const job = runningJobs[jobId];
+      if (job && job.type === 'shell' && job.spawnedJob && job.status < 0) {
+        job.spawnedJob.stdin.pause();
+        job.spawnedJob.kill();
+      }
+      cb();
+      return runningJobs.splice(jobId);
+    })
+  );
 };
 
 module.exports = {

@@ -23,6 +23,7 @@ module.exports = (log, server) => {
 
     ws.on('message', (message) => {
       message = JSON.parse(message);
+      log.debug('WS - Received message: ', message.request);
       switch (message.request) {
         default: return;
         case 'login':
@@ -39,11 +40,10 @@ module.exports = (log, server) => {
           );
         case 'delete_jobs':
           return checkUser(log, message.login, err =>
-            !err && require('./addJob')(log, ws, message, removeConnection, () => {
-              jobsRunner.removeJobs(log, message.jobs, () =>
-                connections.map(c => jobs.sendJobs(log, c.ws, true, removeConnection))
-              );
-            }, {})
+            !err && jobsRunner.removeJobs(log, message.jobs, () => {
+              ws.send(JSON.stringify({ request: 'delete_jobs', success: true }));
+              connections.map(c => jobs.sendJobs(log, c.ws, true, removeConnection));
+            })
           );
       }
     });
