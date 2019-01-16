@@ -105,16 +105,17 @@ class Root extends React.Component {
 
   handleSnackbarClose = () => this.setState({ snackMessage: { open: false, text: '' } });
 
-  handleAddJob = (name, type, schedule, command, args) =>
+  handleAddJob = (name, type, schedule, command, args, cwd) =>
     ws.send(JSON.stringify({
       request: 'add_job',
       login: this.state.login,
       job: {
-        name, type, schedule, command, args,
+        name, type, schedule, command, args, cwd,
         last_run: '',
         status: -2,
         output: '',
-        error: ''
+        error: '',
+        enabled: true
       }
     }));
 
@@ -126,6 +127,13 @@ class Root extends React.Component {
       jobs
     }));
   };
+
+  handleUpdateJob = job =>
+    ws.send(JSON.stringify({
+      request: 'update_job',
+      login: this.state.login,
+      job
+    }));
 
   render() {
     const { handleLogIn } = this;
@@ -142,7 +150,8 @@ class Root extends React.Component {
               <Main
                 data={data}
                 handleAddJob={this.handleAddJob}
-                handleDeleteJob={this.handleDeleteJob} />
+                handleDeleteJob={this.handleDeleteJob}
+                handleUpdateJob={this.handleUpdateJob} />
               :
               <div className={classes.center}>
                 <CircularProgress className={classes.progress} />

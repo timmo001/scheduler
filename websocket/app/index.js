@@ -38,6 +38,13 @@ module.exports = (log, server) => {
               connections.map(c => jobs.sendJobs(log, c.ws, true, removeConnection));
             }, {})
           );
+        case 'update_job':
+          return checkUser(log, message.login, err =>
+            !err && jobsRunner.updateJob(log, connections, message.job, removeConnection, () => {
+              ws.send(JSON.stringify({ request: 'update_job', success: true }));
+              connections.map(c => jobs.sendJobs(log, c.ws, true, removeConnection));
+            })
+          );
         case 'delete_jobs':
           return checkUser(log, message.login, err =>
             !err && jobsRunner.removeJobs(log, message.jobs, () => {

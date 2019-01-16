@@ -46,13 +46,14 @@ const shell = (log, job, cb) => {
 const startJob = (log, connections, job, removeConnection) => {
   log.info('JOBS: Add Job: ', job.name);
   runningJobs.push(job);
-  switch (job.type) {
-    default:
-      return shell(log, job, jobRet => require('../common/jobs').updateJob(jobRet, err => {
-        if (err) { log.error('Error updating job: ', err); return; }
-        connections.map(c => require('../common/jobs').sendJobs(log, c.ws, true, removeConnection));
-      }));
-  }
+  if (job.enabled)
+    switch (job.type) {
+      default:
+        return shell(log, job, jobRet => require('../common/jobs').updateJob(jobRet, err => {
+          if (err) { log.error('Error updating job: ', err); return; }
+          connections.map(c => require('../common/jobs').sendJobs(log, c.ws, true, removeConnection));
+        }));
+    }
 };
 
 const startAllJobs = (log, connections, removeConnection) => {
@@ -86,8 +87,22 @@ const removeJobs = (log, jobs, cb) => {
   );
 };
 
+const updateJob = (log, connections, job, removeConnection, cb) => {
+  log.info('JOBS: Update job..');
+  require('../common/jobs').updateJob(job, err => {
+    if (err) return;
+    cb();
+    if (job && job.type === 'shell' && job.spawnedJob && job.status < 0) {
+      job.spawnedJob.stdin.pause();
+      job.spawnedJob.kill();
+    }
+    return startJob(log, connections, job, removeConnection);
+  });
+};
+
 module.exports = {
   startAllJobs,
   startNewJobs,
-  removeJobs
+  removeJobs,
+  updateJob
 };

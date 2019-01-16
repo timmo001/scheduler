@@ -41,14 +41,15 @@ class AddJob extends React.Component {
     schedule: '0 * * * * *',
     type: 'shell',
     command: '',
-    args: ['']
+    args: [''],
+    cwd: ''
   };
 
   handleClose = () => this.setState({ open: false }, () => this.props.handleClosed());
 
   handleAdd = () => {
-    const { name, type, scheduleConstant, schedule, command, args } = this.state;
-    this.props.handleAddJob(name, type, scheduleConstant ? 'always' : schedule, command, args);
+    const { name, type, scheduleConstant, schedule, command, args, cwd } = this.state;
+    this.props.handleAddJob(name, type, scheduleConstant ? 'always' : schedule, command, args, cwd);
     this.handleClose();
   };
 
@@ -75,7 +76,8 @@ class AddJob extends React.Component {
       scheduleConstant,
       schedule,
       command,
-      args
+      args,
+      cwd
     } = this.state;
     return (
       <Suspense fallback={<CircularProgress className={classes.progressRoot} />}>
@@ -148,6 +150,15 @@ class AddJob extends React.Component {
                   </InputAdornment>
                 }} />
             )}
+            <br />
+            <TextField
+              id="cwd"
+              label="Working Directory"
+              type="text"
+              margin="dense"
+              className={classNames(classes.margin, classes.textField)}
+              value={cwd}
+              onChange={this.handleChange('cwd')} />
             <Tooltip title="Add argument" aria-label="Add argument">
               <IconButton
                 aria-label="Add argument"

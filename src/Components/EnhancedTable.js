@@ -15,10 +15,11 @@ import Typography from '@material-ui/core/Typography';
 import Checkbox from '@material-ui/core/Checkbox';
 import Fab from '@material-ui/core/Fab';
 import IconButton from '@material-ui/core/IconButton';
+import Switch from '@material-ui/core/Switch';
 // import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import { red, green } from '@material-ui/core/colors';
+import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 
 function desc(a, b, orderBy) {
@@ -260,9 +261,15 @@ class EnhancedTable extends React.Component {
 
   handleDelete = () => {
     this.props.handleDelete(this.state.selected.map(s =>
-      this.state.rows.find(r => r === s)
+      this.props.rows.find(r => r === s)
     ));
     this.setState({ selected: [] });
+  };
+
+  handleEnabledChange = item => event => {
+    item = this.props.rows.find(r => r === item);
+    item.enabled = event.target.checked;
+    this.props.handleUpdate(item);
   };
 
   render() {
@@ -298,13 +305,14 @@ class EnhancedTable extends React.Component {
                     <TableRow
                       key={id}
                       hover
-                      onClick={event => this.handleClick(event, n)}
                       role="checkbox"
                       aria-checked={isSelected}
                       tabIndex={-1}
                       selected={isSelected}>
                       <TableCell padding="checkbox">
-                        <Checkbox checked={isSelected === undefined || isSelected === null ? false : isSelected} />
+                        <Checkbox
+                          onClick={event => this.handleClick(event, n)}
+                          checked={isSelected === undefined || isSelected === null ? false : isSelected} />
                       </TableCell>
                       {Object.keys(n).map((x, id) => {
                         const numberPos = n.status.indexOf('(') + 1,
@@ -322,9 +330,14 @@ class EnhancedTable extends React.Component {
                                   statusNumber === 0 && green[500],
                               whiteSpace: columns[id].noWrap && 'nowrap'
                             }}>
-                            {columns[id].date && n[x] ?
-                              moment(n[x]).format('DD/MM/YYYY HH:mm:ss')
-                              : n[x]}
+                            {columns[id].id === 'enabled' ?
+                              <Switch
+                                checked={n[x]}
+                                onChange={this.handleEnabledChange(n)}
+                                value="enabled" />
+                              : columns[id].date && n[x] ?
+                                moment(n[x]).format('DD/MM/YYYY HH:mm:ss')
+                                : n[x]}
                           </TableCell>
                         );
                       })}
@@ -364,6 +377,7 @@ EnhancedTable.propTypes = {
   rows: PropTypes.array.isRequired,
   handleAdd: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
+  handleUpdate: PropTypes.func.isRequired,
   title: PropTypes.string
 };
 

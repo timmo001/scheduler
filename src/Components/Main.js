@@ -70,10 +70,12 @@ class Main extends React.Component {
         label: `Argument ${i > 10 ? i + 1 : `0${i + 1}`}`,
         disablePadding: true
       });
+      columns.push({ id: 'cwd', label: 'Working Directory' });
       columns.push({ id: 'last_run', label: 'Last Run', date: true });
       columns.push({ id: 'status', label: 'Status' });
       columns.push({ id: 'output', label: 'Output', noWrap: true });
       columns.push({ id: 'error', label: 'Error Output', noWrap: true });
+      columns.push({ id: 'enabled', label: '', align: 'right' });
       this.setState({ rows, columns });
     }
   };
@@ -83,7 +85,7 @@ class Main extends React.Component {
   handleAddJobClosed = () => this.setState({ addJob: false });
 
   render() {
-    const { classes, handleAddJob, handleDeleteJob } = this.props;
+    const { classes, handleAddJob, handleDeleteJob, handleUpdateJob } = this.props;
     const { columns, rows, addJob } = this.state;
 
     return (
@@ -102,7 +104,8 @@ class Main extends React.Component {
                     columns={columns}
                     rows={rows}
                     handleAdd={this.handleAddJob}
-                    handleDelete={handleDeleteJob} />
+                    handleDelete={handleDeleteJob}
+                    handleUpdate={handleUpdateJob} />
                 }
               </CardContent>
             </Card>
@@ -123,7 +126,8 @@ Main.propTypes = {
   classes: PropTypes.object.isRequired,
   data: PropTypes.array.isRequired,
   handleAddJob: PropTypes.func.isRequired,
-  handleDeleteJob: PropTypes.func.isRequired
+  handleDeleteJob: PropTypes.func.isRequired,
+  handleUpdateJob: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(Main);
