@@ -286,71 +286,86 @@ class EnhancedTable extends React.Component {
           handleAdd={handleAdd}
           handleDelete={this.handleDelete} />
         <div className={classes.tableWrapper}>
-          <Table className={classes.table} aria-labelledby="tableTitle">
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={this.handleSelectAllClick}
-              onRequestSort={this.handleRequestSort}
-              rowCount={rows.length}
-              title={title}
-              columns={columns} />
-            <TableBody>
-              {stableSort(rows, getSorting(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((n, id) => {
-                  const isSelected = this.isSelected(n);
-                  return (
-                    <TableRow
-                      key={id}
-                      hover
-                      role="checkbox"
-                      aria-checked={isSelected}
-                      tabIndex={-1}
-                      selected={isSelected}>
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          onClick={event => this.handleClick(event, n)}
-                          checked={isSelected === undefined || isSelected === null ? false : isSelected} />
-                      </TableCell>
-                      {Object.keys(n).map((x, id) => {
-                        const numberPos = n.status.indexOf('(') + 1,
-                          statusNumber = Number.parseInt(n.status.substr(numberPos, (n.status.length - 1) - numberPos));
-                        if (!columns[id]) return null;
-                        else return (
-                          <TableCell
-                            key={id}
-                            align={columns[id].align || 'left'}
-                            padding={columns[id].disablePadding ? 'none' : 'default'}
-                            className={classes.cell}
-                            style={{
-                              background: columns[id].id !== 'status' ? 'initial' :
-                                statusNumber > 0 ? red[500] :
-                                  statusNumber === 0 && green[500],
-                              whiteSpace: columns[id].noWrap && 'nowrap'
-                            }}>
-                            {columns[id].id === 'enabled' ?
-                              <Switch
-                                checked={n[x]}
-                                onChange={this.handleEnabledChange(n)}
-                                value="enabled" />
-                              : columns[id].date && n[x] ?
-                                moment(n[x]).format('DD/MM/YYYY HH:mm:ss')
-                                : n[x]}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 49 * emptyRows }}>
-                  <TableCell colSpan={columns.length + 1} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          {!rows || rows.length < 1 ?
+            <div align="center">
+              <TableHead>
+                <TableRow />
+              </TableHead>
+              <TableBody>
+                <div style={{ height: 25 * emptyRows }} />
+                <Typography variant="h5" component="h3">
+                  No {title}. Add some!
+                </Typography>
+                <div style={{ height: 25 * emptyRows }} />
+              </TableBody>
+            </div>
+            :
+            <Table className={classes.table} aria-labelledby="tableTitle">
+              <EnhancedTableHead
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={this.handleSelectAllClick}
+                onRequestSort={this.handleRequestSort}
+                rowCount={rows.length}
+                title={title}
+                columns={columns} />
+              <TableBody>
+                {stableSort(rows, getSorting(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((n, id) => {
+                    const isSelected = this.isSelected(n);
+                    return (
+                      <TableRow
+                        key={id}
+                        hover
+                        role="checkbox"
+                        aria-checked={isSelected}
+                        tabIndex={-1}
+                        selected={isSelected}>
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            onClick={event => this.handleClick(event, n)}
+                            checked={isSelected === undefined || isSelected === null ? false : isSelected} />
+                        </TableCell>
+                        {Object.keys(n).map((x, id) => {
+                          const numberPos = n.status.indexOf('(') + 1,
+                            statusNumber = Number.parseInt(n.status.substr(numberPos, (n.status.length - 1) - numberPos));
+                          if (!columns[id]) return null;
+                          else return (
+                            <TableCell
+                              key={id}
+                              align={columns[id].align || 'left'}
+                              padding={columns[id].disablePadding ? 'none' : 'default'}
+                              className={classes.cell}
+                              style={{
+                                background: columns[id].id !== 'status' ? 'initial' :
+                                  statusNumber > 0 ? red[500] :
+                                    statusNumber === 0 && green[500],
+                                whiteSpace: columns[id].noWrap && 'nowrap'
+                              }}>
+                              {columns[id].id === 'enabled' ?
+                                <Switch
+                                  checked={n[x]}
+                                  onChange={this.handleEnabledChange(n)}
+                                  value="enabled" />
+                                : columns[id].date && n[x] ?
+                                  moment(n[x]).format('DD/MM/YYYY HH:mm:ss')
+                                  : n[x]}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 49 * emptyRows }}>
+                    <TableCell colSpan={columns.length + 1} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          }
         </div>
         <TablePagination
           rowsPerPageOptions={[5, 8, 10, 25]}
