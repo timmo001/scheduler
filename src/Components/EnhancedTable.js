@@ -288,16 +288,11 @@ class EnhancedTable extends React.Component {
         <div className={classes.tableWrapper}>
           {!rows || rows.length < 1 ?
             <div align="center">
-              <TableHead>
-                <TableRow />
-              </TableHead>
-              <TableBody>
-                <div style={{ height: 25 * emptyRows }} />
-                <Typography variant="h5" component="h3">
-                  No {title}. Add some!
-                </Typography>
-                <div style={{ height: 25 * emptyRows }} />
-              </TableBody>
+              <div style={{ height: 25 * emptyRows }} />
+              <Typography variant="h5" component="h3">
+                No {title}. Add some!
+              </Typography>
+              <div style={{ height: 25 * emptyRows }} />
             </div>
             :
             <Table className={classes.table} aria-labelledby="tableTitle">
