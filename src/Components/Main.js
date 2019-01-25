@@ -5,7 +5,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import clone from '../common/clone';
 
 const EnhancedTable = lazy(() => import('./EnhancedTable'));
 const AddJob = lazy(() => import('./AddJob'));
@@ -47,29 +46,52 @@ class Main extends React.Component {
     this.props.data !== nextProps.data && this.updateRows(nextProps.data);
 
   updateRows = newRows => {
-    let rows = clone(newRows);
-    if (rows && rows !== undefined) {
-      let argsCount = 0, columns = [
+    if (newRows && newRows !== undefined) {
+      let columns = [
         { id: 'name', label: 'Name' },
         { id: 'type', label: 'Type' },
         { id: 'schedule', label: 'Schedule' },
         { id: 'command', label: 'Command' }
       ];
-      rows = rows.map(r => {
-        if (!r.args) return null;
+      let argsCount = 0;
+      newRows.map(r => {
         if (r.args.length > argsCount) argsCount = r.args.length;
-        if (r.schedule === 'always') r.schedule = 'Constantly Running';
-        r.status = r.status > 0 ? `Error (${r.status})` :
-          r.status === 0 ? `Completed Successfully (${r.status})` :
-            r.status === -1 ? `Running (${r.status})` :
-              `Not Ran yet (-2)`;
-        return r;
+        return argsCount;
       });
-      for (let i = 0; i < argsCount; i++) columns.push({
-        id: 'args',
-        label: `Argument ${i > 10 ? i + 1 : `0${i + 1}`}`,
-        disablePadding: true
+      const rows = newRows.map(r => {
+        if (!r.args) return null;
+        let row = {
+          name: r.name || '',
+          type: r.type || '',
+          schedule: r.schedule === 'always' ? 'Constantly Running' : r.schedule || '',
+          command: r.command || ''
+        };
+        for (let i = 0; i < argsCount; i++) {
+          row[`argument${i}`] = r.args[i] || '';
+        }
+        row = {
+          ...row,
+          cwd: r.cwd || '',
+          last_run: r.last_run || '',
+          status: r.status > 0 ? `Error (${r.status})` :
+            r.status === 0 ? `Completed Successfully (${r.status})` :
+              r.status === -1 ? `Running (${r.status})` :
+                r.status === -2 ?
+                  `Not Ran yet (${r.status})` :
+                  '',
+          output: r.output || '',
+          error: r.error || '',
+          enabled: r.enabled || '',
+        };
+        return row;
       });
+      for (let i = 0; i < argsCount; i++) {
+        columns.push({
+          id: `argument${i}`,
+          label: `Argument ${i >= 9 ? i + 1 : `0${i + 1}`}`,
+          disablePadding: true
+        });
+      }
       columns.push({ id: 'cwd', label: 'Working Directory' });
       columns.push({ id: 'last_run', label: 'Last Run', date: true });
       columns.push({ id: 'status', label: 'Status' });
