@@ -57,7 +57,11 @@ class AddJob extends React.Component {
 
   handleCheckedChange = name => event => this.setState({ [name]: event.target.checked });
 
-  handleArgAdd = () => this.setState({ args: this.state.args.push('') });
+  handleArgAdd = () => {
+    const args = this.state.args;
+    args.push('');
+    this.setState({ args });
+  };
 
   handleArgRemove = id => this.setState({ args: this.state.args.splice(id) });
 
@@ -83,7 +87,7 @@ class AddJob extends React.Component {
       <Suspense fallback={<CircularProgress className={classes.progressRoot} />}>
         <Dialog
           open={open}
-          // onClose={this.handleClose}
+          maxWidth="lg"
           aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">Add Job</DialogTitle>
           <DialogContent component="form">
@@ -133,7 +137,7 @@ class AddJob extends React.Component {
             {args.map((arg, id) =>
               <TextField
                 key={id}
-                label={`Argument ${id > 10 ? id + 1 : `0${id + 1}`}`}
+                label={`Argument ${id >= 9 ? id + 1 : `0${id + 1}`}`}
                 className={classNames(classes.margin, classes.textField)}
                 value={arg}
                 onChange={this.handleArgChange(id)}
@@ -150,6 +154,14 @@ class AddJob extends React.Component {
                   </InputAdornment>
                 }} />
             )}
+            <Tooltip title="Add argument" aria-label="Add argument">
+              <IconButton
+                aria-label="Add argument"
+                className={classes.argButton}
+                onClick={this.handleArgAdd}>
+                <AddIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
             <br />
             <TextField
               id="cwd"
@@ -159,14 +171,6 @@ class AddJob extends React.Component {
               className={classNames(classes.margin, classes.textField)}
               value={cwd}
               onChange={this.handleChange('cwd')} />
-            <Tooltip title="Add argument" aria-label="Add argument">
-              <IconButton
-                aria-label="Add argument"
-                className={classes.argButton}
-                onClick={this.handleArgAdd}>
-                <AddIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">
