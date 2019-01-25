@@ -52,6 +52,12 @@ module.exports = (log, server) => {
               connections.map(c => jobs.sendJobs(log, c.ws, true, removeConnection));
             })
           );
+        case 'run':
+          return checkUser(log, message.login, err =>
+            !err && jobsRunner.startJob(log, connections, message.job, true, removeConnection, () =>
+              ws.send(JSON.stringify({ request: 'run', success: true }))
+            )
+          );
       }
     });
     ws.on('close', () => { });

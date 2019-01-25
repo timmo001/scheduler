@@ -135,6 +135,13 @@ class Root extends React.Component {
       job
     }));
 
+  handleRunJob = job =>
+    ws.send(JSON.stringify({
+      request: 'run',
+      login: this.state.login,
+      job
+    }));
+
   render() {
     const { handleLogIn } = this;
     const { classes } = this.props;
@@ -151,7 +158,8 @@ class Root extends React.Component {
                 data={data}
                 handleAddJob={this.handleAddJob}
                 handleDeleteJob={this.handleDeleteJob}
-                handleUpdateJob={this.handleUpdateJob} />
+                handleUpdateJob={this.handleUpdateJob}
+                handleRunJob={this.handleRunJob} />
               :
               <div className={classes.center}>
                 <CircularProgress className={classes.progress} />
@@ -180,7 +188,6 @@ class Root extends React.Component {
             }}
             message={<span id="message-id">{snackMessage.text}</span>}
             action={snackMessage.actions} />
-
         </div>
       </Suspense>
     );

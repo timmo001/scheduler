@@ -51,7 +51,7 @@ class Main extends React.Component {
         { id: 'name', label: 'Name' },
         { id: 'type', label: 'Type' },
         { id: 'schedule', label: 'Schedule' },
-        { id: 'command', label: 'Command' }
+        { id: 'command', label: 'Command', disablePadding: true }
       ];
       let argsCount = 0;
       newRows.map(r => {
@@ -81,6 +81,7 @@ class Main extends React.Component {
                   '',
           output: r.output || '',
           error: r.error || '',
+          run: '',
           enabled: r.enabled || '',
         };
         return row;
@@ -93,11 +94,12 @@ class Main extends React.Component {
         });
       }
       columns.push({ id: 'cwd', label: 'Working Directory' });
-      columns.push({ id: 'last_run', label: 'Last Run', date: true });
+      columns.push({ id: 'last_run', label: 'Last Run', align: 'center', date: true });
       columns.push({ id: 'status', label: 'Status' });
       columns.push({ id: 'output', label: 'Output', noWrap: true });
       columns.push({ id: 'error', label: 'Error Output', noWrap: true });
-      columns.push({ id: 'enabled', label: '', align: 'right' });
+      columns.push({ id: 'run', label: '', align: 'right', disablePadding: true });
+      columns.push({ id: 'enabled', label: '', align: 'right', disablePadding: true });
       this.setState({ rows, columns });
     }
   };
@@ -107,7 +109,7 @@ class Main extends React.Component {
   handleAddJobClosed = () => this.setState({ addJob: false });
 
   render() {
-    const { classes, handleAddJob, handleDeleteJob, handleUpdateJob } = this.props;
+    const { classes, handleAddJob, handleDeleteJob, handleUpdateJob, handleRunJob } = this.props;
     const { columns, rows, addJob } = this.state;
 
     return (
@@ -127,7 +129,8 @@ class Main extends React.Component {
                     rows={rows}
                     handleAdd={this.handleAddJob}
                     handleDelete={handleDeleteJob}
-                    handleUpdate={handleUpdateJob} />
+                    handleUpdate={handleUpdateJob}
+                    handleRun={handleRunJob} />
                 }
               </CardContent>
             </Card>
@@ -149,7 +152,8 @@ Main.propTypes = {
   data: PropTypes.array.isRequired,
   handleAddJob: PropTypes.func.isRequired,
   handleDeleteJob: PropTypes.func.isRequired,
-  handleUpdateJob: PropTypes.func.isRequired
+  handleUpdateJob: PropTypes.func.isRequired,
+  handleRunJob: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(Main);

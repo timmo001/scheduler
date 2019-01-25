@@ -14,6 +14,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Checkbox from '@material-ui/core/Checkbox';
 import Fab from '@material-ui/core/Fab';
+import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Switch from '@material-ui/core/Switch';
 // import Tooltip from '@material-ui/core/Tooltip';
@@ -273,7 +274,7 @@ class EnhancedTable extends React.Component {
   };
 
   render() {
-    const { classes, title, columns, handleAdd } = this.props;
+    const { classes, title, columns, handleAdd, handleRun } = this.props;
     const { order, orderBy, selected, rowsPerPage, page, rows } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows ? rows.length : 0 - page * rowsPerPage);
 
@@ -339,14 +340,22 @@ class EnhancedTable extends React.Component {
                                     statusNumber === 0 && green[500],
                                 whiteSpace: columns[id].noWrap && 'nowrap'
                               }}>
-                              {columns[id].id === 'enabled' ?
-                                <Switch
-                                  checked={n[x]}
-                                  onChange={this.handleEnabledChange(n)}
-                                  value="enabled" />
-                                : columns[id].date && n[x] ?
-                                  moment(n[x]).format('DD/MM/YYYY HH:mm:ss')
-                                  : n[x]}
+                              {
+                                columns[id].id === 'run' ?
+                                  <Button
+                                    color="primary"
+                                    disabled={columns[id].enabled === false}
+                                    onClick={() => handleRun(n)}>
+                                    Run
+                                  </Button>
+                                  : columns[id].id === 'enabled' ?
+                                    <Switch
+                                      checked={n[x]}
+                                      onChange={this.handleEnabledChange(n)}
+                                      value="enabled" />
+                                    : columns[id].date && n[x] ?
+                                      moment(n[x]).format('DD/MM/YYYY HH:mm:ss')
+                                      : n[x]}
                             </TableCell>
                           );
                         })}
@@ -388,6 +397,7 @@ EnhancedTable.propTypes = {
   handleAdd: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
   handleUpdate: PropTypes.func.isRequired,
+  handleRun: PropTypes.func.isRequired,
   title: PropTypes.string
 };
 
