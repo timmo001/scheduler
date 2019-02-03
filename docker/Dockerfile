@@ -39,7 +39,7 @@ RUN \
         yarn=1.12.3-r0 \
     \
     && apk add --no-cache \
-        apk-tools=2.10.1-r0 \
+        apk-tools=2.10.3-r1 \
         bash=4.4.19-r1 \
         busybox=1.28.4-r3 \
         ca-certificates=20171114-r3 \
