@@ -45,7 +45,7 @@ RUN \
         ca-certificates=20190108-r0 \
         nginx=1.14.2-r0 \
         nodejs-current=11.3.0-r0 \
-        tzdata=2018f-r0 \
+        tzdata=2018i-r0 \
     \
     && if [ "${BUILD_ARCH}" = "i386" ]; then S6_ARCH="x86"; else S6_ARCH="${BUILD_ARCH}"; fi \
     \
