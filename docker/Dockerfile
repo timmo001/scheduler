@@ -42,7 +42,7 @@ RUN \
         apk-tools=2.10.3-r1 \
         bash=4.4.19-r1 \
         busybox=1.29.3-r10 \
-        ca-certificates=20171114-r3 \
+        ca-certificates=20190108-r0 \
         nginx=1.14.2-r0 \
         nodejs-current=9.11.1-r2 \
         tzdata=2018f-r0 \
