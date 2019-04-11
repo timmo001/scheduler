@@ -13,7 +13,7 @@
     "bcryptjs": "2.4.3",
     "cryptr": "4.0.2",
     "nedb": "1.8.0",
-    "simple-node-logger": "18.12.21",
+    "simple-node-logger": "18.12.22",
     "superagent": "4.1.0",
     "ws": "6.1.3"
   },

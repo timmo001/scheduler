@@ -948,7 +948,7 @@ localforage@^1.3.0:
   dependencies:
     lie "3.1.1"
 
-lodash@^4.17.10:
+lodash@>=4.17.11:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
@@ -1524,12 +1524,12 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
   integrity sha1-tf3AjxKH6hF4Yo5BXiUTK3NkbG0=
 
-simple-node-logger@18.12.21:
-  version "18.12.21"
-  resolved "https://registry.yarnpkg.com/simple-node-logger/-/simple-node-logger-18.12.21.tgz#9efd084f18acfdead27cad1254d7af3f74768246"
-  integrity sha512-I2dA9JLiNrdTsmOI2bT0mIQNEKhTKbj9OM8tny3Il/5R6QdJHlWrv1NDdS+6UQHEnYV1413FnwgqTjzmV0ctCw==
+simple-node-logger@18.12.22:
+  version "18.12.22"
+  resolved "https://registry.yarnpkg.com/simple-node-logger/-/simple-node-logger-18.12.22.tgz#d09d14d4f62aca6f2928eb2d54fe8b13eabd5128"
+  integrity sha512-eeg8W6ngpwY6VRhAstVCEGmqTLVRGJ0o7fVnFXgjh8I46dhMGanh/2xE+rJGsl2nfcF/FV2kWj9ME7pIwezchA==
   dependencies:
-    lodash "^4.17.10"
+    lodash ">=4.17.11"
     moment "^2.20.1"
 
 snapdragon-node@^2.0.1:
