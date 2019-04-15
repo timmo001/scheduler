@@ -857,10 +857,10 @@
     prop-types "^15.6.0"
     react-is "^16.6.3"
 
-"@mdi/font@3.3.92":
-  version "3.3.92"
-  resolved "https://registry.yarnpkg.com/@mdi/font/-/font-3.3.92.tgz#9434b92f9810e41d34dd7936e8e1578cd46bebfd"
-  integrity sha512-Ux6iPfRjT9gHtejfss7aHBjgedLx8OrnX7Q+DuqgGYVkr9Amhi7cWFd745znrj7Y74pnjrs+uAbpohPK3ue5Ew==
+"@mdi/font@3.6.95":
+  version "3.6.95"
+  resolved "https://registry.yarnpkg.com/@mdi/font/-/font-3.6.95.tgz#0bbde766ca2d94cfa0e469f25523b23d3112bdd3"
+  integrity sha512-wUbkF/RRCIh51TPzAL9qUeRSUFla9I3x1nGq62HkfWzIebRHbDY5HPaYCQuZO7398dWaLHTu4BwnBA58YbhfEA==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
